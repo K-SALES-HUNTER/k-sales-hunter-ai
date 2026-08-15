@@ -22,7 +22,7 @@
 
 ### 1. 가상환경 세팅 및 패키지 설치
 
-```bash
+````bash
 # uv로 파이썬 3.12 가상환경 생성
 uv venv --python 3.12
 
@@ -47,20 +47,48 @@ Bash
 uvicorn app.entrypoints.http:app --reload
 
 
-📂 Project Structure
-Plaintext
+### 📂 프로젝트 폴더 및 파일 역할 명세서
+
+```text
 k-sales-hunter-ai/
-├── migrations/             # Alembic DB 마이그레이션 파일
-├── scripts/                # DB 초기화 및 스키마 검증 스크립트
-├── src/
-│   └── app/
-│       ├── contracts/      # 백엔드(Spring)와 공유하는 API DTO/계약 스크립트
-│       ├── core/           # 핵심 AI 및 비즈니스 로직
-│       │   ├── graph/      # LangGraph 에이전트 워크플로 & 노드
-│       │   └── pricing/    # 정밀 마진/비용 계산 엔진 (Pure Python)
-│       ├── entrypoints/    # FastAPI / Runner 엔드포인트
-│       └── infra/          # DB ORM 모델 및 Redis 이벤트 버스
-├── tests/                  # Pytest 단위 및 통합 테스트
-├── docker-compose.yml      # DB / Redis 컨테이너 정의
-└── pyproject.toml          # 프로젝트 패키지 및 의존성 설정
-```
+├── .venv/                      # Python 가상환경 (Git 제외)
+├── docs/                       # 기술 문서, 아키텍처 다이어그램 등 프로젝트 문서 보관
+├── evals/                      # LLM 응답 품질 및 파이프라인 평가(Evaluation) 데이터/스크립트
+├── migrations/                 # Alembic 데이터베이스 마이그레이션 버전 관리
+├── scripts/                    # DB 초기화 및 관리 스크립트
+│   └── init_db.sql             # Docker 실행 시 'ai' 전용 스키마 생성 및 권한 격리 SQL
+│
+├── src/app/                    # 메인 애플리케이션 소스 코드
+│   ├── contracts/v1/           # 백엔드(Spring)와 공유하는 API DTO 스키마 및 계약 정의
+│   │
+│   ├── core/                   # 핵심 비즈니스 로직 및 AI 파이프라인
+│   │   ├── agents/             # 특정 역할(통관, 마진 분석 등)을 수행하는 LLM 서브 에이전트
+│   │   ├── graph/              # LangGraph 기반 워크플로 관리
+│   │   │   ├── nodes/          # Graph 내 개별 실행 노드(수집, 검증, 계산 등)
+│   │   │   ├── analysis.py     # 에이전트 노드 연결 및 Graph 구축 파일
+│   │   │   └── state.py        # Graph 실행 중 공유되는 데이터 상태 구조체 (State)
+│   │   │
+│   │   ├── pricing/            # 정밀 수치 계산 엔진 (Pure Python)
+│   │   │   └── engine.py       # 관부가세, 배송비, 마진율 정밀 계산 수식 코드
+│   │   │
+│   │   ├── providers/          # 외부 API 연동 모듈 (OpenAI, Tavily 등)
+│   │   ├── rag/                # VectorDB(pgvector) 기반 규정 및 상품 문서 임베딩/검색 로직
+│   │   └── tools/              # LLM이 사용할 커스텀 도구 함수 모음 (웹 크롤러 등)
+│   │
+│   ├── entrypoints/            # 서비스 실행 엔드포인트
+│   │   └── runner.py           # Redis 메시지를 수신하여 비동기 AI 분석을 실행하는 워커 프로세스
+│   │
+│   ├── infra/                  # 데이터베이스 및 외부 인프라 레이어
+│   │   ├── models.py           # SQLAlchemy 기반 DB 테이블 (ORM 모델)
+│   │   └── redis_bus.py        # Redis Pub/Sub 이벤트 발신 및 작업 분산 락 관리
+│   │
+│   └── observability/          # LLM 호출 로그, 토큰 사용량, 파이프라인 모니터링 추적 모듈
+│
+├── tests/                      # Pytest 기반 단위 및 통합 테스트 코드
+├── .env                        # [Git 제외] 비밀키 및 DB 접속 URL 등 환경 변수
+├── .gitignore                  # Git 추적 제외 대상 목록
+├── alembic.ini                 # Alembic DB 마이그레이션 설정 파일
+├── docker-compose.yml          # PostgreSQL(pgvector) 및 Redis 컨테이너 구성 파일
+├── pyproject.toml              # uv 기반 파이썬 의존성 패키지 및 프로젝트 설정 파일
+└── README.md                   # 프로젝트 요약 및 Quick Start 가이드
+````
