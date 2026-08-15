@@ -1,0 +1,28 @@
+# 로컬 개발용 인프라.
+# 운영에서는 Spring과 같은 PostgreSQL 인스턴스를 공유한다.
+services:
+  postgres:
+    # pgvector 확장이 미리 들어있는 이미지. 기본 postgres 이미지를 쓰면 확장이 없다.
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: sales_hunter
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # CREATE EXTENSION 은 superuser 권한이 필요하므로 초기화 스크립트에서 처리한다.
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
