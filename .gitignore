@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Claude 작업용 컨텍스트 (문서 원본·분석·가이드). 커밋하지 않는다.
+.claude-context/
