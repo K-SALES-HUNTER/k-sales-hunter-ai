@@ -1,0 +1,131 @@
+{
+  "$defs": {
+    "Packaging": {
+      "description": "포장 완료 기준 치수. 배송 요율 구간을 결정한다 (R-004-10).",
+      "properties": {
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "widthMm": {
+          "title": "Widthmm",
+          "type": "integer"
+        },
+        "depthMm": {
+          "title": "Depthmm",
+          "type": "integer"
+        },
+        "heightMm": {
+          "title": "Heightmm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "weightG",
+        "widthMm",
+        "depthMm",
+        "heightMm"
+      ],
+      "title": "Packaging",
+      "type": "object"
+    },
+    "ShippingMethod": {
+      "enum": [
+        "DIRECT",
+        "SLS"
+      ],
+      "title": "ShippingMethod",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "country": {
+      "title": "Country",
+      "type": "string"
+    },
+    "supplyCostKrw": {
+      "title": "Supplycostkrw",
+      "type": "integer"
+    },
+    "weightG": {
+      "title": "Weightg",
+      "type": "integer"
+    },
+    "packaging": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Packaging"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "shippingMethod": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ShippingMethod"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "priceKrw": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pricekrw"
+    },
+    "targetMarginRate": {
+      "default": 0.25,
+      "title": "Targetmarginrate",
+      "type": "number"
+    },
+    "fixedCostKrw": {
+      "default": 0,
+      "title": "Fixedcostkrw",
+      "type": "integer"
+    },
+    "priceBandKrw": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pricebandkrw"
+    },
+    "fxOverride": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fxoverride"
+    }
+  },
+  "required": [
+    "country",
+    "supplyCostKrw",
+    "weightG"
+  ],
+  "title": "QuoteRequest",
+  "type": "object"
+}

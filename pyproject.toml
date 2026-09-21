@@ -10,11 +10,13 @@ dependencies = [
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
     "httpx>=0.27",
+    "python-multipart>=0.0.12",   # dev_bff 이미지 업로드
     # LangGraph / LLM
     "langgraph>=0.2.50",
-    "langgraph-checkpoint-postgres>=2.0",
     "langchain-core>=0.3",
-    "langchain-openai>=0.2",
+    "openai>=1.54",               # 구조화 출력(response_format=json_schema)은 SDK 직접 호출
+    "tiktoken>=0.8",              # RAG 청킹 토큰 계산
+    "tenacity>=9.0",              # 외부 API 재시도
     # DB
     "sqlalchemy[asyncio]>=2.0",
     "alembic>=1.14",
@@ -23,6 +25,9 @@ dependencies = [
     # infra
     "redis>=5.2",
     "structlog>=24.4",
+    "python-dotenv>=1.0",         # migrations/env.py 가 사용
+    "pyyaml>=6.0",                # fee_schedule / shipping_rate 로더
+    "pillow>=11.0",               # Vision 전송 전 이미지 리사이즈
     # external data
     "tavily-python>=0.5",
 ]

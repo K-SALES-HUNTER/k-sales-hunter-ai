@@ -43,7 +43,7 @@ class PricingInput:
     other_variable_cost: Decimal = Decimal(0)
 
     # 판매 조건 (현지통화)
-    selling_price: Decimal | None = None      # 직접 지정
+    selling_price: Decimal | None = None  # 직접 지정
     target_margin_rate: Decimal | None = None  # 역산용. 0.30 = 30%
     local_currency: str = "VND"
 
@@ -51,7 +51,7 @@ class PricingInput:
     exchange_rate: Decimal = Decimal("0.055")
 
     # 요율
-    platform_fee_rate: Decimal = Decimal("0.06")   # Shopee 수수료
+    platform_fee_rate: Decimal = Decimal("0.06")  # Shopee 수수료
     payment_fee_rate: Decimal = Decimal("0.02")
     duty_rate: Decimal = Decimal(0)
     vat_rate: Decimal = Decimal("0.10")
@@ -131,9 +131,9 @@ def calculate(spec: PricingInput) -> PricingOutput:
 def _reverse_price(spec: PricingInput, base_cost: Decimal) -> Decimal:
     """목표 마진율을 만족하는 현지 판매가를 역산한다. (R-002-05 권장 판매가)
 
-        settlement - cost = price_krw * margin
-        price_krw * (1 - fee) - cost = price_krw * margin
-        price_krw = cost / (1 - fee - margin)
+    settlement - cost = price_krw * margin
+    price_krw * (1 - fee) - cost = price_krw * margin
+    price_krw = cost / (1 - fee - margin)
     """
     dutiable = spec.supply_cost + spec.shipping_cost
     duty = dutiable * spec.duty_rate

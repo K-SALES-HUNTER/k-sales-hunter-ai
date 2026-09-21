@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "CategoryAttr": {
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "title": "Value",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "CategoryAttr",
+      "type": "object"
+    },
+    "OptionSpec": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "OptionSpec",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "categoryId": {
+      "default": "",
+      "title": "Categoryid",
+      "type": "string"
+    },
+    "categoryLabel": {
+      "default": "",
+      "title": "Categorylabel",
+      "type": "string"
+    },
+    "categoryAttrs": {
+      "items": {
+        "$ref": "#/$defs/CategoryAttr"
+      },
+      "title": "Categoryattrs",
+      "type": "array"
+    },
+    "option1": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OptionSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "option2": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OptionSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "stockHint": {
+      "default": "",
+      "title": "Stockhint",
+      "type": "string"
+    }
+  },
+  "title": "SalesSuggestResponse",
+  "type": "object"
+}

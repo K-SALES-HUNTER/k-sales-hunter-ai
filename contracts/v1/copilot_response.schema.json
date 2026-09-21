@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "CopilotAction": {
+      "description": "보고서에 영향을 주는 명령 3종. 그 외 요청은 답변만 한다.",
+      "enum": [
+        "ADD_COUNTRY",
+        "REANALYZE",
+        "REGENERATE_DETAIL"
+      ],
+      "title": "CopilotAction",
+      "type": "string"
+    },
+    "CopilotActionPlan": {
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/CopilotAction"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "CopilotActionPlan",
+      "type": "object"
+    },
+    "CopilotIntent": {
+      "enum": [
+        "QUERY",
+        "COMMAND",
+        "CLARIFY"
+      ],
+      "title": "CopilotIntent",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "answer": {
+      "title": "Answer",
+      "type": "string"
+    },
+    "intent": {
+      "$ref": "#/$defs/CopilotIntent",
+      "default": "QUERY"
+    },
+    "action": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CopilotActionPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "sources": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "answer"
+  ],
+  "title": "CopilotResponse",
+  "type": "object"
+}

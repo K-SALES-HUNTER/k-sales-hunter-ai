@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "Packaging": {
+      "description": "포장 완료 기준 치수. 배송 요율 구간을 결정한다 (R-004-10).",
+      "properties": {
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "widthMm": {
+          "title": "Widthmm",
+          "type": "integer"
+        },
+        "depthMm": {
+          "title": "Depthmm",
+          "type": "integer"
+        },
+        "heightMm": {
+          "title": "Heightmm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "weightG",
+        "widthMm",
+        "depthMm",
+        "heightMm"
+      ],
+      "title": "Packaging",
+      "type": "object"
+    },
+    "ProductSnapshot": {
+      "description": "Spring 이 보내는 상품 스냅샷. Python 은 업무 DB 를 읽지 않는다.",
+      "properties": {
+        "productId": {
+          "title": "Productid",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "supplyCostKrw": {
+          "title": "Supplycostkrw",
+          "type": "integer"
+        },
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "sellingPoint": {
+          "default": "",
+          "title": "Sellingpoint",
+          "type": "string"
+        },
+        "mainTarget": {
+          "default": "",
+          "title": "Maintarget",
+          "type": "string"
+        },
+        "packaging": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Packaging"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "imageUrls": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Imageurls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "productId",
+        "name",
+        "category",
+        "supplyCostKrw",
+        "weightG"
+      ],
+      "title": "ProductSnapshot",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "country": {
+      "title": "Country",
+      "type": "string"
+    },
+    "product": {
+      "$ref": "#/$defs/ProductSnapshot"
+    },
+    "categoryId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Categoryid"
+    }
+  },
+  "required": [
+    "country",
+    "product"
+  ],
+  "title": "SalesSuggestRequest",
+  "type": "object"
+}

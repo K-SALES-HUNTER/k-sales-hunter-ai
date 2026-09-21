@@ -3,10 +3,10 @@
 [들어가는 것] AI 실행 상태와 운영 데이터
 [들어가지 않는 것] users, products, orders, 그리고 분석 결과의 정본
                    분석 결과 정본은 Spring 이 검증 후 public 스키마에 저장한다.
-                   아래 job_results 는 콜백 실패 시 임시 버퍼일 뿐이다.
+                   아래 jobs.result 는 Spring 이 가져갈 때까지 들고 있는 사본이다.
 
 [규칙] public 스키마 테이블을 FK 로 참조하지 않는다.
-       job_id 는 그냥 숫자 컬럼이다. 배포 순서 의존을 없애기 위함이다.
+       job_id 는 Spring 이 발번한 문자열 컬럼이다. 배포 순서 의존을 없애기 위함이다.
 """
 
 from __future__ import annotations
@@ -48,7 +48,8 @@ class LLMCallLog(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     trace_id: Mapped[str] = mapped_column(String(64), index=True)
-    job_id: Mapped[int | None] = mapped_column(BigInteger, index=True, nullable=True)
+    #: jobs.job_id 와 같은 문자열. FK 는 걸지 않는다 (잡 없이 부르는 동기 API 도 있다).
+    job_id: Mapped[str | None] = mapped_column(String(64), index=True, nullable=True)
     node: Mapped[str | None] = mapped_column(String(64), nullable=True)
     provider: Mapped[str] = mapped_column(String(32))
     model: Mapped[str] = mapped_column(String(64))
@@ -125,21 +126,36 @@ class MarketDataCache(Base):
     collected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
-class JobResult(Base):
-    """콜백 실패 시 결과 임시 보관.
+class Job(Base):
+    """잡 실행 상태와 결과.
 
-    이게 없으면 Spring 이 잠깐 죽었을 때 몇 분짜리 LLM 결과와 토큰 비용이 함께 날아간다.
-    Spring 은 GET /internal/ai/jobs/{jobId}/result 로 회수한다.
+    콜백을 쓰지 않는다. Spring 이 GET 으로 상태를 폴링하고 결과도 여기서 가져간다.
+    프로세스가 재시작돼도 결과가 남아 있어 몇 분짜리 LLM 산출물이 날아가지 않는다.
     """
 
-    __tablename__ = "job_results"
+    __tablename__ = "jobs"
 
-    job_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    command_id: Mapped[str] = mapped_column(String(64))
-    payload: Mapped[dict] = mapped_column(JSONB)
-    delivered: Mapped[bool] = mapped_column(Boolean, default=False)
-    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    #: Spring 이 발번한 값. 예) a_12_1, c_12_VN_1, i_3_ab12
+    job_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    #: ANALYSIS | CONTENT | IMAGE
+    job_type: Mapped[str] = mapped_column(String(16), index=True)
+    #: QUEUED | RUNNING | CANCEL_REQUESTED | COMPLETED | FAILED | CANCELLED
+    status: Mapped[str] = mapped_column(String(24), index=True)
+    #: 프론트 로딩 오버레이 단계. GATE | MARKET | SHIPPING | MARGIN | REPORT ...
+    step: Mapped[str | None] = mapped_column(String(24), nullable=True)
+    progress: Mapped[float] = mapped_column(Float, default=0.0)
+    trace_id: Mapped[str] = mapped_column(String(64), default="")
+    #: {"VN": {"status": "RUNNING", "step": "MARKET", "progress": 0.4}}
+    country_states: Mapped[dict] = mapped_column(JSONB, default=dict)
+    #: 입력 원본. 재실행·디버그용.
+    request: Mapped[dict] = mapped_column(JSONB, default=dict)
+    result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    error_detail: Mapped[str | None] = mapped_column(Text, nullable=True)
+    llm_cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class EvalRun(Base):

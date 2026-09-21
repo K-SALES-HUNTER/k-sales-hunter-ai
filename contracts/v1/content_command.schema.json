@@ -1,0 +1,317 @@
+{
+  "$defs": {
+    "AnalysisDigest": {
+      "description": "국가별 분석 결과 중 콘텐츠 생성에 필요한 부분만. 읽기 전용으로 상속받는다.",
+      "properties": {
+        "positioning": {
+          "default": "",
+          "title": "Positioning",
+          "type": "string"
+        },
+        "positioningLabel": {
+          "default": "",
+          "title": "Positioninglabel",
+          "type": "string"
+        },
+        "keywords": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keywords",
+          "type": "array"
+        },
+        "usps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Usps",
+          "type": "array"
+        },
+        "riskFlags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Riskflags",
+          "type": "array"
+        }
+      },
+      "title": "AnalysisDigest",
+      "type": "object"
+    },
+    "MarketProfile": {
+      "description": "셀러의 브랜드 설정. 시장 해설과 콘텐츠 톤에 반영된다 (MKT-01-03).",
+      "properties": {
+        "brandDirection": {
+          "default": "",
+          "title": "Branddirection",
+          "type": "string"
+        },
+        "sellerType": {
+          "default": "",
+          "title": "Sellertype",
+          "type": "string"
+        },
+        "mainTarget": {
+          "default": "",
+          "title": "Maintarget",
+          "type": "string"
+        },
+        "brandTone": {
+          "default": "",
+          "title": "Brandtone",
+          "type": "string"
+        }
+      },
+      "title": "MarketProfile",
+      "type": "object"
+    },
+    "Packaging": {
+      "description": "포장 완료 기준 치수. 배송 요율 구간을 결정한다 (R-004-10).",
+      "properties": {
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "widthMm": {
+          "title": "Widthmm",
+          "type": "integer"
+        },
+        "depthMm": {
+          "title": "Depthmm",
+          "type": "integer"
+        },
+        "heightMm": {
+          "title": "Heightmm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "weightG",
+        "widthMm",
+        "depthMm",
+        "heightMm"
+      ],
+      "title": "Packaging",
+      "type": "object"
+    },
+    "ProductSnapshot": {
+      "description": "Spring 이 보내는 상품 스냅샷. Python 은 업무 DB 를 읽지 않는다.",
+      "properties": {
+        "productId": {
+          "title": "Productid",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "supplyCostKrw": {
+          "title": "Supplycostkrw",
+          "type": "integer"
+        },
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "sellingPoint": {
+          "default": "",
+          "title": "Sellingpoint",
+          "type": "string"
+        },
+        "mainTarget": {
+          "default": "",
+          "title": "Maintarget",
+          "type": "string"
+        },
+        "packaging": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Packaging"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "imageUrls": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Imageurls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "productId",
+        "name",
+        "category",
+        "supplyCostKrw",
+        "weightG"
+      ],
+      "title": "ProductSnapshot",
+      "type": "object"
+    },
+    "SalesInfoSnapshot": {
+      "description": "판매 정보 입력 화면에서 사용자가 확정한 값.",
+      "properties": {
+        "categoryId": {
+          "default": "",
+          "title": "Categoryid",
+          "type": "string"
+        },
+        "categoryLabel": {
+          "default": "",
+          "title": "Categorylabel",
+          "type": "string"
+        },
+        "attributes": {
+          "additionalProperties": true,
+          "title": "Attributes",
+          "type": "object"
+        },
+        "option1": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Option1"
+        },
+        "option2": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Option2"
+        },
+        "finalPriceKrw": {
+          "default": 0,
+          "title": "Finalpricekrw",
+          "type": "integer"
+        },
+        "finalPriceLocal": {
+          "default": 0.0,
+          "title": "Finalpricelocal",
+          "type": "number"
+        },
+        "currency": {
+          "default": "",
+          "title": "Currency",
+          "type": "string"
+        },
+        "shippingMethod": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ShippingMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stockTotal": {
+          "default": 0,
+          "title": "Stocktotal",
+          "type": "integer"
+        }
+      },
+      "title": "SalesInfoSnapshot",
+      "type": "object"
+    },
+    "ShippingMethod": {
+      "enum": [
+        "DIRECT",
+        "SLS"
+      ],
+      "title": "ShippingMethod",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "traceId": {
+      "default": "",
+      "title": "Traceid",
+      "type": "string"
+    },
+    "country": {
+      "title": "Country",
+      "type": "string"
+    },
+    "locale": {
+      "default": "vi",
+      "title": "Locale",
+      "type": "string"
+    },
+    "product": {
+      "$ref": "#/$defs/ProductSnapshot"
+    },
+    "salesInfo": {
+      "$ref": "#/$defs/SalesInfoSnapshot"
+    },
+    "analysis": {
+      "$ref": "#/$defs/AnalysisDigest"
+    },
+    "marketProfile": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketProfile"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "revisionInstruction": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revisioninstruction"
+    }
+  },
+  "required": [
+    "jobId",
+    "country",
+    "product",
+    "salesInfo"
+  ],
+  "title": "ContentCommand",
+  "type": "object"
+}

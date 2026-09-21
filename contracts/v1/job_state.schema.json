@@ -1,0 +1,228 @@
+{
+  "$defs": {
+    "CountryProgress": {
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/CountryStatus",
+          "default": "RUNNING"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobStep"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "progress": {
+          "default": 0.0,
+          "title": "Progress",
+          "type": "number"
+        }
+      },
+      "title": "CountryProgress",
+      "type": "object"
+    },
+    "CountryStatus": {
+      "enum": [
+        "RUNNING",
+        "DONE",
+        "FILTERED_OUT",
+        "NEEDS_REVIEW",
+        "FAILED"
+      ],
+      "title": "CountryStatus",
+      "type": "string"
+    },
+    "ErrorCode": {
+      "enum": [
+        "INVALID_COMMAND_SCHEMA",
+        "PRODUCT_SNAPSHOT_INCOMPLETE",
+        "IMAGE_FETCH_FAILED",
+        "CUSTOMS_DATA_INSUFFICIENT",
+        "CUSTOMS_BLOCKED",
+        "MARKET_DATA_UNAVAILABLE",
+        "LLM_STRUCTURED_OUTPUT_FAILED",
+        "LLM_RATE_LIMITED",
+        "CONTENT_QUALITY_BELOW_THRESHOLD",
+        "EXTERNAL_API_UNAVAILABLE",
+        "SALES_INFO_INVALID",
+        "COPILOT_INTENT_UNCLEAR",
+        "DAILY_BUDGET_EXCEEDED",
+        "JOB_ALREADY_RUNNING",
+        "JOB_NOT_FOUND",
+        "JOB_CANCELLED",
+        "JOB_TIMEOUT",
+        "JOB_INTERRUPTED",
+        "INTERNAL_ERROR"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "JobError": {
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "JobError",
+      "type": "object"
+    },
+    "JobStatus": {
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "CANCEL_REQUESTED",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "title": "JobStatus",
+      "type": "string"
+    },
+    "JobStep": {
+      "description": "프론트 로딩 오버레이 단계와 1:1. 한국어 문구는 프론트가 매핑한다.",
+      "enum": [
+        "GATE",
+        "MARKET",
+        "SHIPPING",
+        "MARGIN",
+        "REPORT",
+        "DRAFT",
+        "REVIEW",
+        "LOCALIZE",
+        "GENERATE"
+      ],
+      "title": "JobStep",
+      "type": "string"
+    },
+    "JobType": {
+      "enum": [
+        "ANALYSIS",
+        "CONTENT",
+        "IMAGE"
+      ],
+      "title": "JobType",
+      "type": "string"
+    }
+  },
+  "description": "GET /internal/ai/*-jobs/{jobId} 응답.\n\n프론트 로딩 오버레이는 step 으로 단계를 그리고 progress 로 막대를 채운다.",
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "jobType": {
+      "$ref": "#/$defs/JobType"
+    },
+    "status": {
+      "$ref": "#/$defs/JobStatus"
+    },
+    "step": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobStep"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "progress": {
+      "default": 0.0,
+      "title": "Progress",
+      "type": "number"
+    },
+    "countries": {
+      "additionalProperties": {
+        "$ref": "#/$defs/CountryProgress"
+      },
+      "title": "Countries",
+      "type": "object"
+    },
+    "etaSeconds": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Etaseconds"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Result"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobError"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "createdAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Createdat"
+    },
+    "finishedAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finishedat"
+    }
+  },
+  "required": [
+    "jobId",
+    "jobType",
+    "status"
+  ],
+  "title": "JobState",
+  "type": "object"
+}

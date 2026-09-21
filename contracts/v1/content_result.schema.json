@@ -1,0 +1,143 @@
+{
+  "$defs": {
+    "ContentStatus": {
+      "enum": [
+        "DONE",
+        "NEEDS_REVIEW",
+        "FAILED"
+      ],
+      "title": "ContentStatus",
+      "type": "string"
+    },
+    "PdpDraft": {
+      "description": "AI 가 만드는 부분. 프론트 PdpContent 의 부분집합.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "usps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Usps",
+          "type": "array"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "specs": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Specs",
+          "type": "array"
+        },
+        "breadcrumb": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Breadcrumb",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PdpDraft",
+      "type": "object"
+    },
+    "QualityIssue": {
+      "properties": {
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        },
+        "hardBlock": {
+          "default": false,
+          "title": "Hardblock",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "QualityIssue",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ContentStatus",
+      "default": "DONE"
+    },
+    "ko": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PdpDraft"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "local": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PdpDraft"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "locale": {
+      "default": "vi",
+      "title": "Locale",
+      "type": "string"
+    },
+    "qualityScore": {
+      "default": 0,
+      "title": "Qualityscore",
+      "type": "integer"
+    },
+    "qualityIssues": {
+      "items": {
+        "$ref": "#/$defs/QualityIssue"
+      },
+      "title": "Qualityissues",
+      "type": "array"
+    },
+    "regenerationCount": {
+      "default": 0,
+      "title": "Regenerationcount",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "jobId"
+  ],
+  "title": "ContentResult",
+  "type": "object"
+}

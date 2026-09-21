@@ -1,0 +1,1037 @@
+{
+  "$defs": {
+    "AxisGrade": {
+      "description": "4축 지표 등급. 프론트 '높음/보통/낮음'.",
+      "enum": [
+        "HIGH",
+        "MID",
+        "LOW"
+      ],
+      "title": "AxisGrade",
+      "type": "string"
+    },
+    "AxisScore": {
+      "properties": {
+        "score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "grade": {
+          "$ref": "#/$defs/AxisGrade"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "comment": {
+          "default": "",
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "grade"
+      ],
+      "title": "AxisScore",
+      "type": "object"
+    },
+    "ChecklistItem": {
+      "properties": {
+        "item": {
+          "title": "Item",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item"
+      ],
+      "title": "ChecklistItem",
+      "type": "object"
+    },
+    "CompetitionResult": {
+      "properties": {
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "stats": {
+          "items": {
+            "$ref": "#/$defs/CompetitionStat"
+          },
+          "title": "Stats",
+          "type": "array"
+        },
+        "priceBandKrw": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PriceBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "table": {
+          "items": {
+            "$ref": "#/$defs/CompetitorRow"
+          },
+          "title": "Table",
+          "type": "array"
+        }
+      },
+      "title": "CompetitionResult",
+      "type": "object"
+    },
+    "CompetitionStat": {
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tone"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "title": "CompetitionStat",
+      "type": "object"
+    },
+    "CompetitorRow": {
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "priceRange": {
+          "title": "Pricerange",
+          "type": "string"
+        },
+        "strength": {
+          "title": "Strength",
+          "type": "string"
+        },
+        "weakness": {
+          "title": "Weakness",
+          "type": "string"
+        },
+        "strategy": {
+          "title": "Strategy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "priceRange",
+        "strength",
+        "weakness",
+        "strategy"
+      ],
+      "title": "CompetitorRow",
+      "type": "object"
+    },
+    "CostRow": {
+      "description": "비용 차감 구조 한 행. 프론트 표 순서를 그대로 따른다.\n\nsalePrice / supplyCost / platformFee / shipping / duty / vat / netProfit",
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "amountKrw": {
+          "title": "Amountkrw",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "amountKrw"
+      ],
+      "title": "CostRow",
+      "type": "object"
+    },
+    "CountryResult": {
+      "properties": {
+        "country": {
+          "title": "Country",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CountryStatus",
+          "default": "RUNNING"
+        },
+        "customs": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomsResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scores": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "insight": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InsightResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "competition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompetitionResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "logistics": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogisticsResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pricing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PricingResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "risk": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RiskResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "completedNodes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Completednodes",
+          "type": "array"
+        },
+        "failedNodes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failednodes",
+          "type": "array"
+        },
+        "errorCode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErrorCode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reviewReasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reviewreasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "country"
+      ],
+      "title": "CountryResult",
+      "type": "object"
+    },
+    "CountryStatus": {
+      "enum": [
+        "RUNNING",
+        "DONE",
+        "FILTERED_OUT",
+        "NEEDS_REVIEW",
+        "FAILED"
+      ],
+      "title": "CountryStatus",
+      "type": "string"
+    },
+    "CustomsLevel": {
+      "enum": [
+        "ALLOWED",
+        "RESTRICTED",
+        "PROHIBITED",
+        "UNKNOWN"
+      ],
+      "title": "CustomsLevel",
+      "type": "string"
+    },
+    "CustomsResult": {
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/CustomsLevel"
+        },
+        "sellable": {
+          "title": "Sellable",
+          "type": "boolean"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "structuralBarriers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structuralbarriers",
+          "type": "array"
+        },
+        "dutyRate": {
+          "default": 0.0,
+          "title": "Dutyrate",
+          "type": "number"
+        },
+        "vatRate": {
+          "default": 0.0,
+          "title": "Vatrate",
+          "type": "number"
+        },
+        "tariffMode": {
+          "default": "MFN",
+          "title": "Tariffmode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "sellable"
+      ],
+      "title": "CustomsResult",
+      "type": "object"
+    },
+    "EntryGrade": {
+      "description": "진입점수 3단계 해석 라벨. 가짜 정밀도를 배제하려고 점수와 함께 준다.",
+      "enum": [
+        "FIT",
+        "NORMAL",
+        "CAUTION"
+      ],
+      "title": "EntryGrade",
+      "type": "string"
+    },
+    "ErrorCode": {
+      "enum": [
+        "INVALID_COMMAND_SCHEMA",
+        "PRODUCT_SNAPSHOT_INCOMPLETE",
+        "IMAGE_FETCH_FAILED",
+        "CUSTOMS_DATA_INSUFFICIENT",
+        "CUSTOMS_BLOCKED",
+        "MARKET_DATA_UNAVAILABLE",
+        "LLM_STRUCTURED_OUTPUT_FAILED",
+        "LLM_RATE_LIMITED",
+        "CONTENT_QUALITY_BELOW_THRESHOLD",
+        "EXTERNAL_API_UNAVAILABLE",
+        "SALES_INFO_INVALID",
+        "COPILOT_INTENT_UNCLEAR",
+        "DAILY_BUDGET_EXCEEDED",
+        "JOB_ALREADY_RUNNING",
+        "JOB_NOT_FOUND",
+        "JOB_CANCELLED",
+        "JOB_TIMEOUT",
+        "JOB_INTERRUPTED",
+        "INTERNAL_ERROR"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "Evidence": {
+      "description": "판정 근거. 출처와 기준일 없이 판정하지 않는다 (R-004-08).",
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "sourceUrl": {
+          "default": "",
+          "title": "Sourceurl",
+          "type": "string"
+        },
+        "publisher": {
+          "default": "",
+          "title": "Publisher",
+          "type": "string"
+        },
+        "effectiveFrom": {
+          "default": "",
+          "title": "Effectivefrom",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "ExchangeRate": {
+      "properties": {
+        "krwPerLocal": {
+          "title": "Krwperlocal",
+          "type": "number"
+        },
+        "currency": {
+          "title": "Currency",
+          "type": "string"
+        },
+        "asOf": {
+          "default": "",
+          "title": "Asof",
+          "type": "string"
+        }
+      },
+      "required": [
+        "krwPerLocal",
+        "currency"
+      ],
+      "title": "ExchangeRate",
+      "type": "object"
+    },
+    "FitGrade": {
+      "description": "프론트 국가 카드 뱃지. '매우 적합/일부 적합/보통/유의'.",
+      "enum": [
+        "VERY_FIT",
+        "PARTIAL_FIT",
+        "NORMAL",
+        "CAUTION"
+      ],
+      "title": "FitGrade",
+      "type": "string"
+    },
+    "GlobalResult": {
+      "properties": {
+        "conclusionTitle": {
+          "default": "",
+          "title": "Conclusiontitle",
+          "type": "string"
+        },
+        "conclusionBody": {
+          "default": "",
+          "title": "Conclusionbody",
+          "type": "string"
+        },
+        "ranking": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ranking",
+          "type": "array"
+        },
+        "bestCountry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bestcountry"
+        },
+        "investigationSummary": {
+          "default": "",
+          "title": "Investigationsummary",
+          "type": "string"
+        },
+        "nextAction": {
+          "default": "",
+          "title": "Nextaction",
+          "type": "string"
+        }
+      },
+      "title": "GlobalResult",
+      "type": "object"
+    },
+    "InsightResult": {
+      "properties": {
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "trends": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trends",
+          "type": "array"
+        },
+        "positioning": {
+          "$ref": "#/$defs/Positioning",
+          "default": "ENTRY"
+        },
+        "positioningLabel": {
+          "default": "",
+          "title": "Positioninglabel",
+          "type": "string"
+        },
+        "conclusionTitle": {
+          "default": "",
+          "title": "Conclusiontitle",
+          "type": "string"
+        },
+        "conclusionBody": {
+          "default": "",
+          "title": "Conclusionbody",
+          "type": "string"
+        }
+      },
+      "title": "InsightResult",
+      "type": "object"
+    },
+    "LogisticsResult": {
+      "properties": {
+        "options": {
+          "items": {
+            "$ref": "#/$defs/ShippingOption"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "packagingUsed": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Packaging"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rateVersion": {
+          "default": "unknown",
+          "title": "Rateversion",
+          "type": "string"
+        }
+      },
+      "title": "LogisticsResult",
+      "type": "object"
+    },
+    "MarginVerdict": {
+      "enum": [
+        "GOOD",
+        "RISK",
+        "NON_VIABLE"
+      ],
+      "title": "MarginVerdict",
+      "type": "string"
+    },
+    "Packaging": {
+      "description": "포장 완료 기준 치수. 배송 요율 구간을 결정한다 (R-004-10).",
+      "properties": {
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "widthMm": {
+          "title": "Widthmm",
+          "type": "integer"
+        },
+        "depthMm": {
+          "title": "Depthmm",
+          "type": "integer"
+        },
+        "heightMm": {
+          "title": "Heightmm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "weightG",
+        "widthMm",
+        "depthMm",
+        "heightMm"
+      ],
+      "title": "Packaging",
+      "type": "object"
+    },
+    "Positioning": {
+      "enum": [
+        "ENTRY",
+        "PREMIUM",
+        "FANDOM",
+        "GIFT"
+      ],
+      "title": "Positioning",
+      "type": "string"
+    },
+    "PriceBand": {
+      "description": "경쟁가 분포. 수집 가격 샘플의 25/50/75 분위수로 코드가 계산한다.",
+      "properties": {
+        "lowKrw": {
+          "title": "Lowkrw",
+          "type": "integer"
+        },
+        "midKrw": {
+          "title": "Midkrw",
+          "type": "integer"
+        },
+        "highKrw": {
+          "title": "Highkrw",
+          "type": "integer"
+        },
+        "weights": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Weights",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lowKrw",
+        "midKrw",
+        "highKrw"
+      ],
+      "title": "PriceBand",
+      "type": "object"
+    },
+    "PriceScenario": {
+      "properties": {
+        "tier": {
+          "$ref": "#/$defs/PriceTier"
+        },
+        "priceKrw": {
+          "title": "Pricekrw",
+          "type": "integer"
+        },
+        "priceLocal": {
+          "title": "Pricelocal",
+          "type": "number"
+        },
+        "netProfitKrw": {
+          "title": "Netprofitkrw",
+          "type": "integer"
+        },
+        "marginRate": {
+          "title": "Marginrate",
+          "type": "number"
+        },
+        "breakEvenUnits": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Breakevenunits"
+        },
+        "badge": {
+          "default": "",
+          "title": "Badge",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "costRows": {
+          "items": {
+            "$ref": "#/$defs/CostRow"
+          },
+          "title": "Costrows",
+          "type": "array"
+        },
+        "recommended": {
+          "default": false,
+          "title": "Recommended",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tier",
+        "priceKrw",
+        "priceLocal",
+        "netProfitKrw",
+        "marginRate"
+      ],
+      "title": "PriceScenario",
+      "type": "object"
+    },
+    "PriceTier": {
+      "enum": [
+        "LOW",
+        "MID",
+        "HIGH"
+      ],
+      "title": "PriceTier",
+      "type": "string"
+    },
+    "PricingResult": {
+      "properties": {
+        "fx": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExchangeRate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "feeScheduleVersion": {
+          "default": "unknown",
+          "title": "Feescheduleversion",
+          "type": "string"
+        },
+        "engineVersion": {
+          "default": "pricing-v1",
+          "title": "Engineversion",
+          "type": "string"
+        },
+        "recommendedTier": {
+          "$ref": "#/$defs/PriceTier",
+          "default": "MID"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/PriceScenario"
+          },
+          "title": "Scenarios",
+          "type": "array"
+        },
+        "verdict": {
+          "$ref": "#/$defs/MarginVerdict",
+          "default": "GOOD"
+        },
+        "verdictReasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verdictreasons",
+          "type": "array"
+        },
+        "explanation": {
+          "default": "",
+          "title": "Explanation",
+          "type": "string"
+        },
+        "appliedBadges": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Appliedbadges",
+          "type": "array"
+        },
+        "sensitivity": {
+          "additionalProperties": true,
+          "title": "Sensitivity",
+          "type": "object"
+        }
+      },
+      "title": "PricingResult",
+      "type": "object"
+    },
+    "RiskDifficulty": {
+      "enum": [
+        "LOW",
+        "MID",
+        "HIGH"
+      ],
+      "title": "RiskDifficulty",
+      "type": "string"
+    },
+    "RiskResult": {
+      "properties": {
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/RiskWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "checklist": {
+          "items": {
+            "$ref": "#/$defs/ChecklistItem"
+          },
+          "title": "Checklist",
+          "type": "array"
+        },
+        "difficulty": {
+          "$ref": "#/$defs/RiskDifficulty",
+          "default": "MID"
+        },
+        "disclaimer": {
+          "default": "",
+          "title": "Disclaimer",
+          "type": "string"
+        }
+      },
+      "title": "RiskResult",
+      "type": "object"
+    },
+    "RiskWarning": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "source": {
+          "default": "",
+          "title": "Source",
+          "type": "string"
+        },
+        "sourceUrl": {
+          "default": "",
+          "title": "Sourceurl",
+          "type": "string"
+        },
+        "effectiveFrom": {
+          "default": "",
+          "title": "Effectivefrom",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "RiskWarning",
+      "type": "object"
+    },
+    "ScoreResult": {
+      "description": "4축 가중합 결과 (R-001-05).\n\nentry_score = 0.35*demand + 0.25*(100-competition) + 0.25*k_fit + 0.15*profitability",
+      "properties": {
+        "demand": {
+          "$ref": "#/$defs/AxisScore"
+        },
+        "competition": {
+          "$ref": "#/$defs/AxisScore"
+        },
+        "kFit": {
+          "$ref": "#/$defs/AxisScore"
+        },
+        "profitability": {
+          "$ref": "#/$defs/AxisScore"
+        },
+        "marketPartial": {
+          "default": 0.0,
+          "title": "Marketpartial",
+          "type": "number"
+        },
+        "entryScore": {
+          "default": 0,
+          "title": "Entryscore",
+          "type": "integer"
+        },
+        "entryGrade": {
+          "$ref": "#/$defs/EntryGrade",
+          "default": "NORMAL"
+        },
+        "fitGrade": {
+          "$ref": "#/$defs/FitGrade",
+          "default": "NORMAL"
+        },
+        "rank": {
+          "default": 0,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "criticAttempts": {
+          "default": 0,
+          "title": "Criticattempts",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "demand",
+        "competition",
+        "kFit",
+        "profitability"
+      ],
+      "title": "ScoreResult",
+      "type": "object"
+    },
+    "ShippingMethod": {
+      "enum": [
+        "DIRECT",
+        "SLS"
+      ],
+      "title": "ShippingMethod",
+      "type": "string"
+    },
+    "ShippingOption": {
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/ShippingMethod"
+        },
+        "costKrw": {
+          "title": "Costkrw",
+          "type": "integer"
+        },
+        "costUsd": {
+          "default": 0.0,
+          "title": "Costusd",
+          "type": "number"
+        },
+        "etaMinDays": {
+          "default": 0,
+          "title": "Etamindays",
+          "type": "integer"
+        },
+        "etaMaxDays": {
+          "default": 0,
+          "title": "Etamaxdays",
+          "type": "integer"
+        },
+        "recommended": {
+          "default": false,
+          "title": "Recommended",
+          "type": "boolean"
+        },
+        "fitBadge": {
+          "default": "",
+          "title": "Fitbadge",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "costKrw"
+      ],
+      "title": "ShippingOption",
+      "type": "object"
+    },
+    "Usage": {
+      "properties": {
+        "llmCalls": {
+          "default": 0,
+          "title": "Llmcalls",
+          "type": "integer"
+        },
+        "inputTokens": {
+          "default": 0,
+          "title": "Inputtokens",
+          "type": "integer"
+        },
+        "outputTokens": {
+          "default": 0,
+          "title": "Outputtokens",
+          "type": "integer"
+        },
+        "costUsd": {
+          "default": 0.0,
+          "title": "Costusd",
+          "type": "number"
+        }
+      },
+      "title": "Usage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "global": {
+      "$ref": "#/$defs/GlobalResult"
+    },
+    "countries": {
+      "items": {
+        "$ref": "#/$defs/CountryResult"
+      },
+      "title": "Countries",
+      "type": "array"
+    },
+    "usage": {
+      "$ref": "#/$defs/Usage"
+    }
+  },
+  "required": [
+    "jobId"
+  ],
+  "title": "AnalysisResult",
+  "type": "object"
+}

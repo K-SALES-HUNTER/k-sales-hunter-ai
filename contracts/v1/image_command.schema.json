@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "ImageMode": {
+      "enum": [
+        "BASIC",
+        "MODEL"
+      ],
+      "title": "ImageMode",
+      "type": "string"
+    },
+    "ImageTarget": {
+      "enum": [
+        "PRODUCT",
+        "DETAIL"
+      ],
+      "title": "ImageTarget",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "traceId": {
+      "default": "",
+      "title": "Traceid",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/ImageTarget",
+      "default": "DETAIL"
+    },
+    "prompt": {
+      "title": "Prompt",
+      "type": "string"
+    },
+    "mode": {
+      "$ref": "#/$defs/ImageMode",
+      "default": "BASIC"
+    },
+    "modelId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Modelid"
+    },
+    "referenceUrls": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Referenceurls",
+      "type": "array"
+    }
+  },
+  "required": [
+    "jobId",
+    "prompt"
+  ],
+  "title": "ImageCommand",
+  "type": "object"
+}
