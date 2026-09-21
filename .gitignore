@@ -219,3 +219,9 @@ __marimo__/
 
 # Claude 작업용 컨텍스트 (문서 원본·분석·가이드). 커밋하지 않는다.
 .claude-context/
+.DS_Store
+.idea/
+
+# 런타임 산출물
+out/
+uploads/

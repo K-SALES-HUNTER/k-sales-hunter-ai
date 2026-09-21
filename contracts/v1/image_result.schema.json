@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "imageUrl": {
+      "default": "",
+      "title": "Imageurl",
+      "type": "string"
+    },
+    "prompt": {
+      "default": "",
+      "title": "Prompt",
+      "type": "string"
+    },
+    "resolvedPrompt": {
+      "default": "",
+      "title": "Resolvedprompt",
+      "type": "string"
+    }
+  },
+  "required": [
+    "jobId"
+  ],
+  "title": "ImageResult",
+  "type": "object"
+}

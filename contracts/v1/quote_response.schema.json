@@ -1,0 +1,289 @@
+{
+  "$defs": {
+    "CostRow": {
+      "description": "비용 차감 구조 한 행. 프론트 표 순서를 그대로 따른다.\n\nsalePrice / supplyCost / platformFee / shipping / duty / vat / netProfit",
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "amountKrw": {
+          "title": "Amountkrw",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "amountKrw"
+      ],
+      "title": "CostRow",
+      "type": "object"
+    },
+    "ExchangeRate": {
+      "properties": {
+        "krwPerLocal": {
+          "title": "Krwperlocal",
+          "type": "number"
+        },
+        "currency": {
+          "title": "Currency",
+          "type": "string"
+        },
+        "asOf": {
+          "default": "",
+          "title": "Asof",
+          "type": "string"
+        }
+      },
+      "required": [
+        "krwPerLocal",
+        "currency"
+      ],
+      "title": "ExchangeRate",
+      "type": "object"
+    },
+    "PriceScenario": {
+      "properties": {
+        "tier": {
+          "$ref": "#/$defs/PriceTier"
+        },
+        "priceKrw": {
+          "title": "Pricekrw",
+          "type": "integer"
+        },
+        "priceLocal": {
+          "title": "Pricelocal",
+          "type": "number"
+        },
+        "netProfitKrw": {
+          "title": "Netprofitkrw",
+          "type": "integer"
+        },
+        "marginRate": {
+          "title": "Marginrate",
+          "type": "number"
+        },
+        "breakEvenUnits": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Breakevenunits"
+        },
+        "badge": {
+          "default": "",
+          "title": "Badge",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "costRows": {
+          "items": {
+            "$ref": "#/$defs/CostRow"
+          },
+          "title": "Costrows",
+          "type": "array"
+        },
+        "recommended": {
+          "default": false,
+          "title": "Recommended",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tier",
+        "priceKrw",
+        "priceLocal",
+        "netProfitKrw",
+        "marginRate"
+      ],
+      "title": "PriceScenario",
+      "type": "object"
+    },
+    "PriceTier": {
+      "enum": [
+        "LOW",
+        "MID",
+        "HIGH"
+      ],
+      "title": "PriceTier",
+      "type": "string"
+    },
+    "Quote": {
+      "properties": {
+        "priceKrw": {
+          "title": "Pricekrw",
+          "type": "integer"
+        },
+        "priceLocal": {
+          "title": "Pricelocal",
+          "type": "number"
+        },
+        "netProfitKrw": {
+          "title": "Netprofitkrw",
+          "type": "integer"
+        },
+        "marginRate": {
+          "title": "Marginrate",
+          "type": "number"
+        },
+        "breakEvenUnits": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Breakevenunits"
+        },
+        "costRows": {
+          "items": {
+            "$ref": "#/$defs/CostRow"
+          },
+          "title": "Costrows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "priceKrw",
+        "priceLocal",
+        "netProfitKrw",
+        "marginRate"
+      ],
+      "title": "Quote",
+      "type": "object"
+    },
+    "ShippingMethod": {
+      "enum": [
+        "DIRECT",
+        "SLS"
+      ],
+      "title": "ShippingMethod",
+      "type": "string"
+    },
+    "ShippingOption": {
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/ShippingMethod"
+        },
+        "costKrw": {
+          "title": "Costkrw",
+          "type": "integer"
+        },
+        "costUsd": {
+          "default": 0.0,
+          "title": "Costusd",
+          "type": "number"
+        },
+        "etaMinDays": {
+          "default": 0,
+          "title": "Etamindays",
+          "type": "integer"
+        },
+        "etaMaxDays": {
+          "default": 0,
+          "title": "Etamaxdays",
+          "type": "integer"
+        },
+        "recommended": {
+          "default": false,
+          "title": "Recommended",
+          "type": "boolean"
+        },
+        "fitBadge": {
+          "default": "",
+          "title": "Fitbadge",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "costKrw"
+      ],
+      "title": "ShippingOption",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "shippingOptions": {
+      "items": {
+        "$ref": "#/$defs/ShippingOption"
+      },
+      "title": "Shippingoptions",
+      "type": "array"
+    },
+    "quote": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Quote"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "scenarios": {
+      "items": {
+        "$ref": "#/$defs/PriceScenario"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "recommendedTier": {
+      "$ref": "#/$defs/PriceTier",
+      "default": "MID"
+    },
+    "fx": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExchangeRate"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "feeScheduleVersion": {
+      "default": "unknown",
+      "title": "Feescheduleversion",
+      "type": "string"
+    },
+    "appliedBadges": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Appliedbadges",
+      "type": "array"
+    }
+  },
+  "title": "QuoteResponse",
+  "type": "object"
+}

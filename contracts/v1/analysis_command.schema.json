@@ -1,0 +1,266 @@
+{
+  "$defs": {
+    "AnalysisPreferences": {
+      "properties": {
+        "targetMarginRate": {
+          "default": 0.25,
+          "title": "Targetmarginrate",
+          "type": "number"
+        },
+        "shippingMethod": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ShippingMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fixedCostKrw": {
+          "default": 0,
+          "title": "Fixedcostkrw",
+          "type": "integer"
+        }
+      },
+      "title": "AnalysisPreferences",
+      "type": "object"
+    },
+    "JobKind": {
+      "description": "분석 잡의 실행 방식.",
+      "enum": [
+        "FULL",
+        "PARTIAL"
+      ],
+      "title": "JobKind",
+      "type": "string"
+    },
+    "MarketProfile": {
+      "description": "셀러의 브랜드 설정. 시장 해설과 콘텐츠 톤에 반영된다 (MKT-01-03).",
+      "properties": {
+        "brandDirection": {
+          "default": "",
+          "title": "Branddirection",
+          "type": "string"
+        },
+        "sellerType": {
+          "default": "",
+          "title": "Sellertype",
+          "type": "string"
+        },
+        "mainTarget": {
+          "default": "",
+          "title": "Maintarget",
+          "type": "string"
+        },
+        "brandTone": {
+          "default": "",
+          "title": "Brandtone",
+          "type": "string"
+        }
+      },
+      "title": "MarketProfile",
+      "type": "object"
+    },
+    "Packaging": {
+      "description": "포장 완료 기준 치수. 배송 요율 구간을 결정한다 (R-004-10).",
+      "properties": {
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "widthMm": {
+          "title": "Widthmm",
+          "type": "integer"
+        },
+        "depthMm": {
+          "title": "Depthmm",
+          "type": "integer"
+        },
+        "heightMm": {
+          "title": "Heightmm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "weightG",
+        "widthMm",
+        "depthMm",
+        "heightMm"
+      ],
+      "title": "Packaging",
+      "type": "object"
+    },
+    "PartialSpec": {
+      "description": "부분 재실행 입력. changed_fields 로 시작 노드를 정하고 나머지는 이전 결과에서 복원한다.",
+      "properties": {
+        "changedFields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Changedfields",
+          "type": "array"
+        },
+        "forceRerunNodes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Forcererunnodes",
+          "type": "array"
+        },
+        "previousResult": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previousresult"
+        }
+      },
+      "title": "PartialSpec",
+      "type": "object"
+    },
+    "ProductSnapshot": {
+      "description": "Spring 이 보내는 상품 스냅샷. Python 은 업무 DB 를 읽지 않는다.",
+      "properties": {
+        "productId": {
+          "title": "Productid",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "supplyCostKrw": {
+          "title": "Supplycostkrw",
+          "type": "integer"
+        },
+        "weightG": {
+          "title": "Weightg",
+          "type": "integer"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "sellingPoint": {
+          "default": "",
+          "title": "Sellingpoint",
+          "type": "string"
+        },
+        "mainTarget": {
+          "default": "",
+          "title": "Maintarget",
+          "type": "string"
+        },
+        "packaging": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Packaging"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "imageUrls": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Imageurls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "productId",
+        "name",
+        "category",
+        "supplyCostKrw",
+        "weightG"
+      ],
+      "title": "ProductSnapshot",
+      "type": "object"
+    },
+    "ShippingMethod": {
+      "enum": [
+        "DIRECT",
+        "SLS"
+      ],
+      "title": "ShippingMethod",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "traceId": {
+      "default": "",
+      "title": "Traceid",
+      "type": "string"
+    },
+    "jobType": {
+      "$ref": "#/$defs/JobKind",
+      "default": "FULL"
+    },
+    "countries": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Countries",
+      "type": "array"
+    },
+    "product": {
+      "$ref": "#/$defs/ProductSnapshot"
+    },
+    "marketProfile": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketProfile"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "preferences": {
+      "$ref": "#/$defs/AnalysisPreferences"
+    },
+    "partial": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PartialSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "jobId",
+    "product"
+  ],
+  "title": "AnalysisCommand",
+  "type": "object"
+}

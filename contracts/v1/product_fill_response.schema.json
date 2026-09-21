@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "ProductFeatures": {
+      "properties": {
+        "colors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Colors",
+          "type": "array"
+        },
+        "materials": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Materials",
+          "type": "array"
+        },
+        "shape": {
+          "default": "",
+          "title": "Shape",
+          "type": "string"
+        },
+        "style": {
+          "default": "",
+          "title": "Style",
+          "type": "string"
+        }
+      },
+      "title": "ProductFeatures",
+      "type": "object"
+    }
+  },
+  "description": "프론트는 비어 있던 필드에만 이 값을 채운다. 사용자 입력은 덮어쓰지 않는다.",
+  "properties": {
+    "category": {
+      "default": "",
+      "title": "Category",
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "title": "Description",
+      "type": "string"
+    },
+    "sellingPoints": {
+      "default": "",
+      "title": "Sellingpoints",
+      "type": "string"
+    },
+    "mainTarget": {
+      "default": "",
+      "title": "Maintarget",
+      "type": "string"
+    },
+    "features": {
+      "$ref": "#/$defs/ProductFeatures"
+    },
+    "keywords": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Keywords",
+      "type": "array"
+    },
+    "kTrendCategory": {
+      "default": "",
+      "title": "Ktrendcategory",
+      "type": "string"
+    },
+    "confidence": {
+      "default": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "imageUsed": {
+      "default": false,
+      "title": "Imageused",
+      "type": "boolean"
+    }
+  },
+  "title": "ProductFillResponse",
+  "type": "object"
+}

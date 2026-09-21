@@ -1,0 +1,38 @@
+{
+  "properties": {
+    "name": {
+      "default": "",
+      "title": "Name",
+      "type": "string"
+    },
+    "category": {
+      "default": "",
+      "title": "Category",
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "title": "Description",
+      "type": "string"
+    },
+    "sellingPoints": {
+      "default": "",
+      "title": "Sellingpoints",
+      "type": "string"
+    },
+    "mainTarget": {
+      "default": "",
+      "title": "Maintarget",
+      "type": "string"
+    },
+    "imageUrls": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Imageurls",
+      "type": "array"
+    }
+  },
+  "title": "ProductFillRequest",
+  "type": "object"
+}

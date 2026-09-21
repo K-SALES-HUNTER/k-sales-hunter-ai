@@ -1,0 +1,50 @@
+{
+  "$defs": {
+    "JobStatus": {
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "CANCEL_REQUESTED",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "title": "JobStatus",
+      "type": "string"
+    },
+    "JobType": {
+      "enum": [
+        "ANALYSIS",
+        "CONTENT",
+        "IMAGE"
+      ],
+      "title": "JobType",
+      "type": "string"
+    }
+  },
+  "description": "POST /internal/ai/*-jobs 응답 (202).",
+  "properties": {
+    "schemaVersion": {
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "jobId": {
+      "title": "Jobid",
+      "type": "string"
+    },
+    "jobType": {
+      "$ref": "#/$defs/JobType"
+    },
+    "status": {
+      "$ref": "#/$defs/JobStatus",
+      "default": "QUEUED"
+    }
+  },
+  "required": [
+    "jobId",
+    "jobType"
+  ],
+  "title": "JobAccepted",
+  "type": "object"
+}
