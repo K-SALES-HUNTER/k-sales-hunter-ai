@@ -86,7 +86,7 @@
 | TH | ฿1,500 이하 관세·VAT 면제 | 2026-01-01 폐지, 1밧부터 과세 | 태국 관세청 고시 219/2568 (2025-12-04) |
 | SG | S$400 이하 수입 GST 면제 | 2023-01-01 부터 OVR 체제로 과세 | IRAS Overseas Vendor Registration |
 
-- `docs/AI_개발계획_v2.md` §6 의 표에 VN "de minimis", TH "฿1,500 기준" 이 남아 있다. 낡은 값이므로 지워야 한다.
+- `docs/AI_개발계획_v2.md` §6 의 표에 있던 VN "de minimis"·TH "฿1,500 기준" 은 이 PR 에서 지우고 경고 문구로 바꿨다.
 - 인터넷 자료 상당수가 폐지 전 기준으로 남아 있다. 면세 한도를 넣으면 관세·VAT 가 빠져 마진이 과대 계산된다.
 - 참고: <https://xaydungchinhsach.chinhphu.vn/tu-18-2-2025-bai-bo-quy-dinh-mien-thue-hang-nhap-khau-duoi-1-trieu-dong-gui-qua-chuyen-phat-nhanh-119250104170119018.htm> · <https://www.hlbthai.com/import-duty-exemption-for-low-value-goods-to-end-on-31-december-2025/> · <https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/consumers/gst-on-imported-low-value-goods>
 
