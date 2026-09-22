@@ -19,7 +19,7 @@
 
     답변은 600자 이내. 프론트 패널 폭이 320px 다.
 
-담당: 이동건   상태: stub (4주차 구현)
+담당: 이동건 (전략 고도화 코파일럿 R-005)   상태: stub
 """
 
 from __future__ import annotations

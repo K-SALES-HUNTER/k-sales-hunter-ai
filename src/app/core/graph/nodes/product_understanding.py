@@ -7,7 +7,7 @@
     이미지를 못 받으면 텍스트만으로 진행하고 image_used=False 를 남긴다 (UC-01 A2).
     상품 등록 화면의 'AI 자동 채우기'(core/services/product_fill.py)와 프롬프트를 공유한다.
 
-담당: 차은호   상태: stub
+담당: 차은호 (트렌드 헌터 R-001)   상태: stub
 """
 
 from __future__ import annotations

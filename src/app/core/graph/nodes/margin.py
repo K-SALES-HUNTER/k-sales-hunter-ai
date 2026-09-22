@@ -8,7 +8,7 @@
 
 [철칙] 금액은 Decimal 로 계산한다. LLM 은 해설만 담당한다.
 
-담당: 차은호 (계산 엔진은 권수현)   상태: stub
+담당: 이동건 (마진 메이커 R-002)   상태: stub
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ async def run(state: CountryState) -> dict:
         price_band=(state.get("competition") or {}).get("price_band_krw"),
     )
 
-    # TODO(차은호): critic 규칙 + gpt-4o 해설 추가.
+    # TODO(이동건): critic 규칙 + gpt-4o 해설 추가.
     result.setdefault("verdict", MarginVerdict.GOOD.value)
     result.setdefault("verdict_reasons", [])
     result.setdefault("explanation", "")

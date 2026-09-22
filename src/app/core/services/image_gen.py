@@ -13,7 +13,7 @@
     target=DETAIL 이면 인포그래픽·상세 컷 스타일 지시를 덧붙인다.
     비용이 장당 $0.05~0.2 이므로 일일 상한(DAILY_IMAGE_BUDGET)을 건다.
 
-담당: 강근우   상태: stub
+담당: 강근우 (콘텐츠 아키텍트 R-003)   상태: stub
 """
 
 from __future__ import annotations

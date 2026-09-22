@@ -6,24 +6,26 @@
 - 기준 문서: `명세서정리.md`(F-01~F-43 · R-000~R-006), `docs/AI_개발계획_v2.md`, `docs/API_SPEC_FE기준.md`
 - 범위: AI 레포(`k-sales-hunter-ai`)가 구현하는 요구사항. Spring·FE 담당 항목은 "구현" 칸에 레포명만 적는다.
 - 상태: `stub`(임시값 반환) · `구현`(실동작) · `미착수` · `범위외`
-- 작성: 차은호 · 갱신 2026-09-21 (1주차 말)
+- 작성: 차은호 · 갱신 2026-09-22 (담당 열을 에이전트 배정 기준으로 정정)
+- 담당 기준: **에이전트 담당자**(동건 마진메이커 / 근우 비서AI·상세페이지 / 은호 트렌드헌터 / 수현 통관).
+  이미 구현이 끝난 행은 실제 구현자를 적고, 남은 작업은 에이전트 담당자를 적는다.
 
 ## 1. 분석 파이프라인 (R-000 비서 AI 오케스트레이터)
 
 | 요구사항 | 내용 | 기능 | 화면 | 구현 | 검증 | 상태 | 담당 |
 |---|---|---|---|---|---|---|---|
 | R-000-01 | 노드 순서 오케스트레이션 (gate→market→shipping→margin→report) | F-16 | SYS-01-01 | `core/graph/analysis.py` | `test_analysis_graph.py::test_모든_노드를_거친다` | 구현 | 이동건 |
-| R-000-02 | 게이트 우선 — PROHIBITED 면 이후 노드 생략 | F-14 | SYS-01-01 | `core/graph/analysis.py` · `nodes/customs_gate.py` | `test_통관_차단이면_이후_노드를_건너뛴다` | 구현 | 차은호 |
+| R-000-02 | 게이트 우선 — PROHIBITED 면 이후 노드 생략 | F-14 | SYS-01-01 | `core/graph/analysis.py` · `nodes/customs_gate.py` | `test_통관_차단이면_이후_노드를_건너뛴다` | 구현 (분기) / 판정은 stub | 이동건(분기 완료) · 권수현(판정) |
 | R-000-03 | 국가 fan-out 병렬 실행 후 State 병합 | F-16 | RPT-01-01 | `core/graph/analysis.py` | `test_3개국이_모두_끝까지_돈다` · `test_국가_하나가_실패해도_나머지는_끝난다` | 구현 | 이동건 |
 | R-000-04 | 결과 종합 · 진입점수 확정 · 국가 랭킹 | F-18 | RPT-01-01 | `nodes/report_compose.py` · `core/pricing/scoring.py` | `test_진입점수와_순위가_확정된다` | stub | 이동건 |
-| R-000-05 | 부분 재실행 — 변경 필드별 영향 범위 판정 | F-42 | EDT-01-01 | `core/graph/rerun_map.py` | — | 미착수 (5주차) | 차은호 |
+| R-000-05 | 부분 재실행 — 변경 필드별 영향 범위 판정 | F-42 | EDT-01-01 | `core/graph/rerun_map.py` | — | 미착수 | 강근우 |
 | R-000-07 | 세션·중단 — 진행 중 노드 취소 | F-42 | SYS-01-01 | `core/jobs/runner.py` | — | 구현 | 이동건 |
 
 ## 2. 시장 분석 (R-001 트렌드 헌터)
 
 | 요구사항 | 내용 | 기능 | 화면 | 구현 | 검증 | 상태 | 담당 |
 |---|---|---|---|---|---|---|---|
-| R-001-02 | 상품 이해 — 시각 특징·키워드·카테고리 추출 | F-10 | PRD-01-01 | `nodes/product_understanding.py` · `core/services/product_fill.py` | — | stub | 차은호 / 강근우(동기 API) |
+| R-001-02 | 상품 이해 — 시각 특징·키워드·카테고리 추출 | F-10 | PRD-01-01 | `nodes/product_understanding.py` · `core/services/product_fill.py` | — | stub | 차은호 |
 | R-001-03 | 국가별 시장 데이터 수집 (경쟁 상품·가격·키워드) | F-15 | RPT-02-01 | `nodes/market_research.py` · `core/providers/` | — | stub (mock provider) | 차은호 |
 | R-001-05 | 진입 적합성 4축 가중합 (수요·경쟁·K적합·수익성) | F-16 | RPT-01-01 · RPT-02-01 | `nodes/market_evaluate.py` · `core/pricing/scoring.py` | `test_scoring.py::test_시장_3축_가중합_공식` 외 | stub (점수 공식은 구현) | 차은호 |
 | R-001-06 | 경쟁 환경 분석 · 경쟁가 밴드(25/50/75 분위) | F-17 | RPT-02-01 | `nodes/market_evaluate.py` | — | stub | 차은호 |
@@ -35,12 +37,12 @@
 
 | 요구사항 | 내용 | 기능 | 화면 | 구현 | 검증 | 상태 | 담당 |
 |---|---|---|---|---|---|---|---|
-| R-002-03 | 비용 스택 합산 (수수료·배송비·관세·VAT) | F-23 | RPT-02-01 | `core/pricing/engine.py` · `core/services/pricing_quote.py` | `test_analysis_graph.py::test_국가별_비용_구조가_프론트_표_순서와_같다` | 구현 | 권수현 |
+| R-002-03 | 비용 스택 합산 (수수료·배송비·관세·VAT) | F-23 | RPT-02-01 | `core/pricing/engine.py` · `core/services/pricing_quote.py` | `test_analysis_graph.py::test_국가별_비용_구조가_프론트_표_순서와_같다` | 구현 | 이동건 |
 | R-002-04 | 환율 적용 (현지통화 ↔ KRW) | F-21 | RPT-02-01 | `core/providers/` (FxProvider) | — | mock | 이동건 |
-| R-002-05 | 적정 판매가 · 개당 순이익 산출 (3안) | F-22 | RPT-02-01 | `core/pricing/engine.py` · `nodes/margin.py` | — | 구현 / 노드는 stub | 권수현 / 차은호 |
-| R-002-08 | 손익분기 분석 · 반영 비용 항목 표기 | F-23 | RPT-02-01 | `core/pricing/engine.py` · `core/services/pricing_quote.py` | — | 구현 | 권수현 |
-| R-002-09 | 마진 검증 (순이익 음수·마진율 10% 미만 판정) | F-23 | RPT-02-01 | `nodes/margin.py` (critic) | — | stub | 차은호 |
-| R-002-10 | 마진 결과 해설 문장 생성 | F-23 | RPT-02-01 | `nodes/margin.py` (explain) | — | stub | 차은호 |
+| R-002-05 | 적정 판매가 · 개당 순이익 산출 (3안) | F-22 | RPT-02-01 | `core/pricing/engine.py` · `nodes/margin.py` | — | 구현 / 3안·민감도 보강 필요 | 이동건 |
+| R-002-08 | 손익분기 분석 · 반영 비용 항목 표기 | F-23 | RPT-02-01 | `core/pricing/engine.py` · `core/services/pricing_quote.py` | — | 구현 | 이동건 |
+| R-002-09 | 마진 검증 (순이익 음수·마진율 10% 미만 판정) | F-23 | RPT-02-01 | `nodes/margin.py` (critic) | — | stub | 이동건 |
+| R-002-10 | 마진 결과 해설 문장 생성 | F-23 | RPT-02-01 | `nodes/margin.py` (explain) | — | stub | 이동건 |
 
 > 확인 필요: R-002-09/10 의 원문 문구는 요구사항 정의서에서 아직 확인하지 못했다. 코드 주석(`nodes/margin.py`) 기준으로 적어 두었고, 정의서 확정 시 교체한다.
 
@@ -48,23 +50,25 @@
 
 | 요구사항 | 내용 | 기능 | 화면 | 구현 | 검증 | 상태 | 담당 |
 |---|---|---|---|---|---|---|---|
-| R-004-01 | 배송 방식 추천 (직배송 / Shopee SLS) | F-20 | RPT-02-01 | `nodes/logistics_estimate.py` | — | 구현 | 차은호 |
+| R-004-01 | 배송 방식 추천 (직배송 / Shopee SLS) | F-20 | RPT-02-01 | `nodes/logistics_estimate.py` | — | 구현 | 권수현 |
 | R-004-02 | 무게 구간별 배송비 산출 | F-20 | RPT-02-01 | `core/pricing/shipping_rate.py` · `data/shipping_rates/*.yaml` | — | 구현 / YAML 미작성 | 권수현 |
-| R-004-03 | 통관 가능 여부 판정 + 근거 조항 표시 | F-14 · F-43 | RPT-02-01 | `nodes/customs_gate.py` · `core/rag/gate_rules.py` | `test_통관_차단이면_이후_노드를_건너뛴다` | stub | 차은호 |
-| R-004-04 | 금지·제한 품목 매치 | F-14 | RPT-02-01 | `nodes/customs_gate.py` · `data/policies/quick_rules/{cc}.yaml` | — | stub | 차은호 |
-| R-004-05 | 통관 처리 주의사항 체크리스트 | F-14 | RPT-02-01 | `nodes/risk_checklist.py` | — | stub | 차은호 |
-| R-004-06 | 반품 리스크 안내 | F-14 | RPT-02-01 | `nodes/risk_checklist.py` | — | stub | 차은호 |
-| R-004-07 | 운영 난이도 판정 | F-14 | RPT-02-01 | `nodes/risk_checklist.py` | — | stub | 차은호 |
-| R-004-08 | 판정 근거 원문·출처·기준일 보존 | F-43 | RPT-02-01 | `infra/models.py::RagDocument` · `contracts/v1/analysis.py::Evidence` · `data/policies/manifest.yaml` | `test_policy_manifest.py` | 구현 (문서 적재는 3주차) | 차은호 |
-| R-004-10 | 포장 완료 기준 치수 입력 | F-20 | SEL-01-01 | `contracts/v1/analysis.py::Packaging` | — | 구현 | 이동건 |
+| R-004-03 | 통관 가능 여부 판정 + 근거 조항 표시 | F-14 · F-43 | RPT-02-01 | `nodes/customs_gate.py` · `core/rag/gate_rules.py` | `test_통관_차단이면_이후_노드를_건너뛴다` | stub | 권수현 |
+| R-004-04 | 금지·제한 품목 매치 | F-14 | RPT-02-01 | `nodes/customs_gate.py` · `data/policies/quick_rules/{cc}.yaml` | — | stub | 권수현 |
+| R-004-05 | 통관 처리 주의사항 체크리스트 | F-14 | RPT-02-01 | `nodes/risk_checklist.py` | — | stub | 권수현 |
+| R-004-06 | 반품 리스크 안내 | F-14 | RPT-02-01 | `nodes/risk_checklist.py` | — | stub | 권수현 |
+| R-004-07 | 운영 난이도 판정 | F-14 | RPT-02-01 | `nodes/risk_checklist.py` | — | stub | 권수현 |
+| R-004-08 | 판정 근거 원문·출처·기준일 보존 | F-43 | RPT-02-01 | `infra/models.py::RagDocument` · `contracts/v1/analysis.py::Evidence` · `data/policies/manifest.yaml` | `test_policy_manifest.py` | manifest 완료 / 적재 미착수 | 권수현 (manifest 초안 차은호) |
+| R-004-10 | 포장 완료 기준 치수 입력 | F-20 | SEL-01-01 | `contracts/v1/analysis.py::Packaging` | — | 구현 | 권수현 |
 
-## 5. 범위 밖 (참고)
+## 5. 이 표가 아직 안 다루는 요구사항
 
 | 요구사항 | 내용 | 구현 | 담당 |
 |---|---|---|---|
-| R-003 | 콘텐츠 아키텍트 — 상세페이지·이미지 생성 | `core/graph/` content_graph (미작성) · `core/services/image_gen.py` | 강근우 |
+| R-003 | 콘텐츠 아키텍트 — 상세페이지·이미지 생성 | `core/graph/content.py` (미작성) · `core/services/{sales_suggest,image_gen}.py` | 강근우 |
 | R-005 | 전략 고도화 코파일럿 | `core/services/copilot.py` | 이동건 |
-| R-006 | 플랫폼 오토 업로더 (Shopee 연동) | Spring 레포 | 권수현 · 강근우 |
+| R-006 | 플랫폼 오토 업로더 (Shopee 연동) | **과업 범위 제외** (기술결정서 결정-2). 프론트에서 셀러센터 링크로 대체 | — |
+
+R-003·R-005 는 구현이 시작되면 이 표에 절을 추가한다.
 
 ## 6. 미해결 항목
 
@@ -98,9 +102,15 @@
 
 `REPORT_COMPOSE`(이동건)가 읽는 국가별 산출물(`scores`·`insight`·`pricing`)의 모양을 2주차 초에 합의하기로 되어 있다(ONBOARDING §5). 노드 8개 실구현 전에 맞춰야 재작업이 없다.
 
-### 7-4. 미작성 데이터 파일 · 권수현
+### 7-4. 미작성 데이터 파일 · 이동건 · 권수현 · 강근우
 
-`data/fee_schedules/*.yaml`·`data/shipping_rates/*.yaml` 이 아직 없어 `fee_schedule.py` 의 폴백 표와 `nodes/_stubs.py` 의 임시 세율이 쓰이고 있다. 두 곳의 값이 서로 다르면 보고서와 동기 API 가 다른 숫자를 낸다.
+`fee_schedule.py` 의 폴백 표와 `nodes/_stubs.py` 의 임시 세율이 동시에 쓰이고 있다. 두 곳의 값이 서로 다르면 보고서와 동기 API 가 다른 숫자를 낸다.
+
+| 파일 | 담당 |
+|---|---|
+| `data/fee_schedules/*.yaml` (수수료·관세·VAT) | 이동건 (관세·VAT 값은 권수현이 제공) |
+| `data/shipping_rates/*.yaml` | 권수현 |
+| `data/shopee_categories/*.json` · `data/culture/*.yaml` | 강근우 |
 
 ### 7-5. FxProvider 가 mock 뿐 · 이동건
 

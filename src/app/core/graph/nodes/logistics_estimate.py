@@ -6,7 +6,7 @@
 
 요율표는 core/pricing/shipping_rate.py 가 읽는다. 이 노드는 입력만 고른다.
 
-담당: 차은호 (요율 파일은 권수현)   상태: 동작함 (요율 YAML 이 없으면 임시값)
+담당: 권수현 (크로스보더 통관 R-004)   상태: 동작함 (요율 YAML 이 없으면 임시값)
 """
 
 from __future__ import annotations

@@ -14,7 +14,7 @@ PROHIBITED 면 이후 노드를 실행하지 않고 그 국가만 조기 종료�
     VN 은 RAG(VERIFIED 문서), SG/TH 는 문서가 적어 data/policies/quick_rules/{cc}.yaml 우선.
     관세·VAT 율은 data/fee_schedules/{cc}.yaml 에서 읽어 pricing 으로 넘긴다.
 
-담당: 차은호   상태: stub
+담당: 권수현 (크로스보더 통관 R-004)   상태: stub
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ from app.core.graph.state import CountryState
 async def run(state: CountryState) -> dict:
     country = state.get("country", "")
 
-    # TODO(차은호): rag.retriever + rag.gate_rules 로 교체. 아래는 임시값.
+    # TODO(권수현): rag.retriever + rag.gate_rules 로 교체. 아래는 임시값.
     tax = _stubs.TAX.get(country, {"duty_rate": 0.0, "vat_rate": 0.0, "tariff_mode": "MFN"})
     level = CustomsLevel.ALLOWED
 

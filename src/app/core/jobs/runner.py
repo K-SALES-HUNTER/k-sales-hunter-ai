@@ -133,7 +133,7 @@ async def _run_content(command: ContentCommand) -> None:
     ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id)
 
     async def execute() -> dict:
-        # TODO(강근우): content_graph 로 교체
+        # TODO(강근우): core/graph/content.py 로 교체
         from app.contracts.v1 import ContentResult
 
         return ContentResult(job_id=command.job_id, locale=command.locale).model_dump(
@@ -147,7 +147,7 @@ async def _run_image(command: ImageCommand) -> None:
     ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id)
 
     async def execute() -> dict:
-        # TODO(강근우): image_gen 서비스로 교체
+        # TODO(강근우): core/services/image_gen.py 로 교체
         from app.contracts.v1 import ImageResult
 
         return ImageResult(job_id=command.job_id, prompt=command.prompt).model_dump(

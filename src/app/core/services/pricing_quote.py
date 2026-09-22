@@ -9,7 +9,7 @@
 [철칙] 금액은 Decimal. float 로 계산하지 않는다.
 [철칙] 이 모듈은 LLM 을 import 하지 않는다. 해설은 MARGIN 노드의 explain 단계가 붙인다.
 
-담당: 권수현
+담당: 이동건 (마진 메이커 R-002)
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from app.core.providers import get_fx_provider
 #: 반영된 비용 항목. 프론트가 뱃지로 보여준다. 누락 검증용 (R-002-08)
 APPLIED_BADGES = ["관세 반영", "VAT 반영", "배송비 반영", "Shopee 수수료 반영", "환율 반영"]
 
-#: 추천가 대비 Low / High 배수. TODO(권수현): 경쟁가 분위수 기반으로 교체.
+#: 추천가 대비 Low / High 배수. TODO(이동건): 경쟁가 분위수 기반으로 교체.
 _LOW_RATIO = Decimal("0.76")
 _HIGH_RATIO = Decimal("1.31")
 

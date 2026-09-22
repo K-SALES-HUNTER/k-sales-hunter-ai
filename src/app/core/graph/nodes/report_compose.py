@@ -10,7 +10,7 @@
 
 [규칙] 점수 계산은 core/pricing/scoring.py 의 순수 함수만 쓴다. LLM 은 문장만 만든다.
 
-담당: 이동건
+담당: 강근우 (비서 AI 오케스트레이터 R-000). 기반 구현과 실 LLM 마무리는 이동건.
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ def _profit_sub_scores(country: dict) -> dict[str, float]:
 
     return {
         "unit_margin": scoring.unit_margin_score(margin_rate),
-        # TODO(권수현): 환율 -10% 시나리오가 생기면 실제 값으로 교체
+        # TODO(이동건): 환율 -10% 시나리오가 생기면 실제 값으로 교체
         "cost_stability": scoring.cost_stability_score(margin_rate, margin_rate * 0.85),
         "price_fit": scoring.price_fit_score(int(recommended.get("price_krw", 0)), band),
         "bep_feasibility": scoring.bep_feasibility_score(recommended.get("break_even_units")),

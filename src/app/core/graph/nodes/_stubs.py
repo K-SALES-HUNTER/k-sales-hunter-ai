@@ -2,7 +2,7 @@
 
 [삭제 예정] 각 노드가 실제 구현되면 해당 항목을 여기서 지운다.
             프론트 목 데이터와 비슷한 값을 넣어 두어 연동 화면이 그럴듯하게 뜬다.
-담당: 차은호 (노드 구현하면서 하나씩 제거)
+담당: 각 노드 담당자 (AXES·PRICE_BAND·POSITIONING 차은호 / TAX 권수현)
 """
 
 from __future__ import annotations
