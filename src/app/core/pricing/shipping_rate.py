@@ -19,7 +19,7 @@ data/shipping_rates/{VN,SG,TH}.yaml 예시
           - { up_to_g: null, base_krw: 6200, per_kg_krw: 2600 }
       SLS: { ... }
 
-담당: 권수현 (YAML 실제 값 조사·작성)
+담당: 권수현 (크로스보더 통관 R-004-02). YAML 실제 값 조사·작성
 """
 
 from __future__ import annotations

@@ -7,7 +7,7 @@
     TikTok Creative Center 와 Google Trends 는 공식 API 가 없어 후순위.
     결과는 Redis ai:market:* 6시간 캐시 + market_data_cache 테이블에 영구 보관한다.
 
-담당: 차은호   상태: stub
+담당: 차은호 (트렌드 헌터 R-001)   상태: stub
 """
 
 from __future__ import annotations

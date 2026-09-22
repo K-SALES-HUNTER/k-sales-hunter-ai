@@ -3,9 +3,11 @@
 프론트는 .env 의 VITE_API_BASE_URL 만 http://localhost:8000/api/v1 로 바꾸면 된다.
 Spring 이 뜨면 주소만 되돌린다. 경로와 응답 모양이 같아서 프론트 코드는 손대지 않는다.
 
-[권수현에게] 이 파일이 곧 실행되는 API 명세다. 컨트롤러를 만들 때 응답 JSON 을 그대로 맞추면 된다.
-             특히 _to_total_report / _to_country_report 의 매핑 규칙을 옮겨야 한다.
-             AI 는 숫자와 통화 코드만 주고, 표시용 문자열은 여기서 만든다.
+[Spring 담당자에게] 이 파일이 곧 실행되는 API 명세다.
+    컨트롤러를 만들 때 응답 JSON 을 그대로 맞추면 된다.
+    특히 _to_total_report / _to_country_report 의 매핑 규칙을 옮겨야 한다.
+    AI 는 숫자와 통화 코드만 주고, 표시용 문자열은 여기서 만든다.
+    라우트별 담당은 docs/ONBOARDING.md §5 참조.
 
 [한계] 저장은 메모리다. 서버를 재시작하면 등록한 상품이 사라진다.
        잡 상태와 결과만 ai.jobs 에 남는다. 임시 도구라 이 정도로 둔다.

@@ -14,8 +14,25 @@ from app.config import DATA_DIR
 
 MANIFEST = DATA_DIR / "policies" / "manifest.yaml"
 
-REQUIRED = {"doc_id", "country", "document_type", "title", "source_url", "publisher", "effective_from", "language", "review_status"}
-DOCUMENT_TYPES = {"PROHIBITED_LIST", "CUSTOMS", "TAX", "CERTIFICATION", "PLATFORM_POLICY", "RETURN_POLICY"}
+REQUIRED = {
+    "doc_id",
+    "country",
+    "document_type",
+    "title",
+    "source_url",
+    "publisher",
+    "effective_from",
+    "language",
+    "review_status",
+}
+DOCUMENT_TYPES = {
+    "PROHIBITED_LIST",
+    "CUSTOMS",
+    "TAX",
+    "CERTIFICATION",
+    "PLATFORM_POLICY",
+    "RETURN_POLICY",
+}
 
 
 @pytest.fixture(scope="module")
@@ -25,7 +42,7 @@ def documents() -> list[dict]:
 
 def test_문서마다_필수_필드가_있다(documents):
     for doc in documents:
-        assert REQUIRED <= doc.keys(), f"{doc.get('doc_id')} 누락: {REQUIRED - doc.keys()}"
+        assert doc.keys() >= REQUIRED, f"{doc.get('doc_id')} 누락: {REQUIRED - doc.keys()}"
 
 
 def test_doc_id는_중복되지_않는다(documents):

@@ -11,7 +11,7 @@ Critic 루프
 경쟁가 밴드는 수집된 가격 샘플의 25/50/75 분위수로 코드가 계산한다.
 수익성 축은 여기서 못 낸다. 마진·리스크 결과가 필요해 REPORT_COMPOSE 에서 합산한다.
 
-담당: 차은호   상태: stub
+담당: 차은호 (트렌드 헌터 R-001)   상태: stub
 """
 
 from __future__ import annotations

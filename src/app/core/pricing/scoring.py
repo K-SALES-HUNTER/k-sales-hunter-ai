@@ -15,7 +15,7 @@ LLM 이 점수를 직접 만들면 실행마다 값이 달라지고 근거 없�
 1위와 4위를 5%p 완충한 값이다. 성과 데이터가 쌓이면 학습 가중치로 교체한다.
 
 [철칙] 이 패키지에서는 LLM 을 import 하지 않는다.
-담당: 권수현 (하위 5지표 산출 규칙 정교화)
+담당: 이동건 (마진 메이커 R-002)
 """
 
 from __future__ import annotations
@@ -102,7 +102,7 @@ def fit_grade(rank: int, grade: EntryGrade) -> FitGrade:
 
 
 # ── 하위 5지표 산출 (임시 규칙) ─────────────────────────────────────────
-# TODO(권수현): 마진·리스크 실제 산출값으로 정교화한다.
+# TODO(이동건): 마진·리스크 실제 산출값으로 정교화한다.
 
 
 def unit_margin_score(margin_rate: float) -> float:

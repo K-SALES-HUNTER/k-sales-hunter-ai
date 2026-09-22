@@ -10,7 +10,7 @@
     이미지를 못 받으면 텍스트만으로 진행하고 image_used=False 를 남긴다.
     응답 10초 이내. 캐시 키는 입력 해시.
 
-담당: 강근우   상태: stub
+담당: 차은호 (트렌드 헌터 R-001-02). 노드와 프롬프트를 공유한다.   상태: stub
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ CATEGORIES = [
 
 
 async def fill(request: ProductFillRequest) -> ProductFillResponse:
-    # TODO(강근우): gpt-4o vision + agents.schemas.ProductUnderstanding 으로 교체
+    # TODO(차은호): gpt-4o vision + agents.schemas.ProductUnderstanding 으로 교체
     return ProductFillResponse(
         category=request.category or "",
         description=request.description or "",

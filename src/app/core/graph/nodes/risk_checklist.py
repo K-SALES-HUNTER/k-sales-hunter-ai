@@ -7,7 +7,7 @@
     RAG 로 반품 정책·플랫폼 정책·통관 가이드 문서를 top-3 뽑고 gpt-4o-mini 로 요약한다.
     면책 문구는 고정 상수로 붙인다 (정책은 바뀔 수 있고 법적 효력이 없다).
 
-담당: 차은호   상태: stub
+담당: 권수현 (크로스보더 통관 R-004)   상태: stub
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ DISCLAIMER = "정책 원문 기준일 시점의 정보이며 법적 효력이 �
 
 @node(NodeName.RISK_CHECKLIST)
 async def run(state: CountryState) -> dict:
-    # TODO(차은호): rag.retriever + gpt-4o-mini 요약으로 교체. 아래는 임시값.
+    # TODO(권수현): rag.retriever + gpt-4o-mini 요약으로 교체. 아래는 임시값.
     return {
         "risk": {
             "warnings": [],

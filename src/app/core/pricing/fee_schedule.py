@@ -18,7 +18,7 @@ data/fee_schedules/{VN,SG,TH}.yaml 예시
     tax_base: CIF              # CIF | SALE_PRICE
     tariff_mode: MFN           # MFN | VKFTA | NONE
 
-담당: 권수현 (YAML 실제 값 조사·작성)
+담당: 이동건 (마진 메이커 R-002). 관세·VAT 값은 권수현이 조사해 넘긴다.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ from app.observability.logging import get_logger
 log = get_logger(mod="fee_schedule")
 
 #: YAML 이 아직 없을 때 쓰는 임시값. 프론트 목 데이터와 같은 숫자라 화면이 비슷하게 뜬다.
-#: TODO(권수현): data/fee_schedules/*.yaml 작성 후 이 표를 지운다.
+#: TODO(이동건): data/fee_schedules/*.yaml 작성 후 이 표를 지운다.
 _FALLBACK: dict[str, dict] = {
     "VN": {
         "version": "vn-fallback",

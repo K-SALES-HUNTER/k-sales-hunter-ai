@@ -10,7 +10,7 @@ Shopee 제약
     data/shopee_categories/{cc}.json 에서 키워드 매칭으로 후보 5개를 추린 뒤
     gpt-4o-mini 가 1개를 고르고 속성 값을 채운다. 후보를 좁혀야 환각이 줄고 싸다.
 
-담당: 강근우   상태: stub
+담당: 강근우 (콘텐츠 아키텍트 R-003-12/13)   상태: stub
 """
 
 from __future__ import annotations
