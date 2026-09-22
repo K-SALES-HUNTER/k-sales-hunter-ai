@@ -1,0 +1,156 @@
+# 정책 문서 수집 목록 (RAG 원천)
+#
+# rag/ingest.py 가 이 파일을 읽어 문서를 받아오고, 번역한 뒤 ai.rag_documents 에 적재한다.
+# 필드 이름은 infra/models.py 의 RagDocument 컬럼과 1:1 로 맞춘다.
+#
+#   country         ISO-2 국가 코드
+#   document_type   PROHIBITED_LIST | CUSTOMS | TAX | CERTIFICATION | PLATFORM_POLICY | RETURN_POLICY
+#   category_code   특정 카테고리 전용 문서면 표기, 전 품목 공통이면 생략
+#   source_url      원문 주소. 캡처본이 아니라 갱신되는 원문을 가리킨다
+#   publisher       발행 기관
+#   effective_from  시행일 (YYYY-MM-DD). 판정 근거 표시에 그대로 쓴다
+#   language        원문 언어
+#   review_status   DRAFT | VERIFIED. 번역 검토를 마친 것만 VERIFIED 로 올린다.
+#                   CUSTOMS_GATE 의 최종 판매 가능 판정은 VERIFIED 문서만 본다.
+#   supersedes      이 문서가 대체한 이전 문서의 doc_id
+#
+# 담당: 차은호. 1주차 VN 10건 → 3주차 VN 20~40건 + SG/TH 각 5~10건.
+
+version: 1
+updated_at: 2026-09-21
+
+documents:
+  # ── 플랫폼 정책 ───────────────────────────────────────────────
+  - doc_id: VN-SHOPEE-PROHIBITED-01
+    country: VN
+    document_type: PROHIBITED_LIST
+    title: 금지/제한 상품 정책
+    source_url: https://help.shopee.vn/portal/4/article/77247
+    publisher: Shopee Vietnam
+    effective_from: 2024-01-01   # TODO(차은호): 원문 하단 개정일 확인 후 교체
+    language: vi
+    review_status: DRAFT
+    notes: 게이트 1차 판정 기준. 카테고리별 금지·제한 구분이 이 문서에 있다.
+
+  - doc_id: VN-SHOPEE-PROHIBITED-02
+    country: VN
+    document_type: PROHIBITED_LIST
+    title: 판매 금지 상품 목록 (셀러 교육센터)
+    source_url: https://banhang.shopee.vn/edu/article/382
+    publisher: Shopee Vietnam
+    effective_from: 2024-01-01   # TODO(차은호): 원문 갱신일 확인
+    language: vi
+    review_status: DRAFT
+    notes: 77247 의 셀러용 요약본. 품목 키워드 추출은 이쪽이 쉽다.
+
+  - doc_id: VN-SHOPEE-RETURN-01
+    country: VN
+    document_type: RETURN_POLICY
+    title: 반품 및 환불 정책
+    source_url: https://help.shopee.vn/portal/4/article/77251
+    publisher: Shopee Vietnam
+    effective_from: 2024-01-01   # TODO(차은호): 원문 개정일 확인
+    language: vi
+    review_status: DRAFT
+    notes: RISK_CHECKLIST 반품 리스크 항목의 근거. 수령 후 15일 기준.
+
+  # ── 통관 · 금지품목 ──────────────────────────────────────────
+  - doc_id: VN-CUSTOMS-BAN-69-2018
+    country: VN
+    document_type: CUSTOMS
+    title: Nghị định 69/2018/NĐ-CP — 수출입 금지 품목 목록 (부록 I~III)
+    source_url: https://vcci.com.vn/legal-document/nghi-dinh-692018nd-cp-huong-dan-luat-quan-ly-ngoai-thuong
+    publisher: Chính phủ Việt Nam
+    effective_from: 2018-05-15
+    language: vi
+    review_status: DRAFT
+    notes: |
+      법령 기준 금지 품목. 부록 I 금지, 부록 II 지정업체 전용, 부록 III 허가 필요.
+      플랫폼 정책보다 상위 근거라 PROHIBITED 판정 시 이 조항을 인용한다.
+
+  # ── 세금 · 관세 ──────────────────────────────────────────────
+  - doc_id: VN-TAX-VAT-48-2024
+    country: VN
+    document_type: TAX
+    title: Luật Thuế GTGT 48/2024/QH15 — 부가가치세 (표준세율 10%)
+    source_url: https://vanban.chinhphu.vn/?pageid=27160&docid=212476
+    publisher: Quốc hội Việt Nam
+    effective_from: 2025-07-01
+    language: vi
+    review_status: DRAFT
+    notes: data/fee_schedules/VN.yaml 의 vat_rate 근거.
+
+  - doc_id: VN-TAX-DEMINIMIS-01-2025
+    country: VN
+    document_type: TAX
+    title: Quyết định 01/2025/QĐ-TTg — 소액 수입물품 면세 폐지
+    source_url: https://xaydungchinhsach.chinhphu.vn/tu-18-2-2025-bai-bo-quy-dinh-mien-thue-hang-nhap-khau-duoi-1-trieu-dong-gui-qua-chuyen-phat-nhanh-119250104170119018.htm
+    publisher: Thủ tướng Chính phủ
+    effective_from: 2025-02-18
+    language: vi
+    review_status: DRAFT
+    supersedes: 78/2010/QĐ-TTg
+    notes: |
+      [마진 계산 주의] 100만 VND 이하 특송 화물 면세가 폐지됐다.
+      de_minimis 를 0 으로 두어야 한다. 과거 자료에 남은 100만 VND 기준을 쓰면 마진이 과대 계산된다.
+
+  - doc_id: VN-TAX-MFN-26-2023
+    country: VN
+    document_type: TAX
+    title: Nghị định 26/2023/NĐ-CP — 수출세·MFN 우대 수입세율표
+    source_url: https://vanban.chinhphu.vn/?pageid=27160&docid=208020
+    publisher: Chính phủ Việt Nam
+    effective_from: 2023-05-31
+    language: vi
+    review_status: DRAFT
+    notes: 원산지 증명이 없을 때 적용하는 기본 세율. 개정 144/2024/NĐ-CP (2024-12-16 시행) 함께 본다.
+
+  - doc_id: VN-TAX-VKFTA-125-2022
+    country: VN
+    document_type: TAX
+    title: Nghị định 125/2022/NĐ-CP — VKFTA 특혜관세율표 (2022~2027)
+    source_url: https://trungtamwto.vn/chuyen-de/22569-nghi-dinh-1252022nd-cp-ve-bieu-thue-nhap-khau-uu-dai-hiep-dinh-vkfta-giai-doan-2022--2027
+    publisher: Chính phủ Việt Nam
+    effective_from: 2022-12-30
+    language: vi
+    review_status: DRAFT
+    notes: |
+      한국산 원산지증명(Form VK) 을 붙이면 이 표를 쓴다. 연도별 인하 일정이 있어
+      2026년 구간 값을 읽어야 한다. MFN 과 둘 중 낮은 쪽이 실효세율.
+
+  # ── 품목별 인증 ──────────────────────────────────────────────
+  - doc_id: VN-CERT-COSMETIC-06-2011
+    country: VN
+    document_type: CERTIFICATION
+    category_code: beauty
+    title: Thông tư 06/2011/TT-BYT — 화장품 관리 (CPN 공표 의무)
+    source_url: https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=99376
+    publisher: Bộ Y tế
+    effective_from: 2011-04-01
+    language: vi
+    review_status: DRAFT
+    notes: 화장품은 공표번호(CPN) 없이 유통 불가 → RESTRICTED 판정 근거.
+
+  - doc_id: VN-CERT-COSMETIC-34-2025
+    country: VN
+    document_type: CERTIFICATION
+    category_code: beauty
+    title: Thông tư 34/2025/TT-BYT — 화장품 관리 개정
+    source_url: https://luatvietnam.vn/y-te/thong-tu-34-2025-tt-byt-sua-doi-quan-ly-my-pham-theo-thong-tu-06-2011-tt-byt-404591-d1.html
+    publisher: Bộ Y tế
+    effective_from: 2025-08-18
+    language: vi
+    review_status: DRAFT
+    notes: 06/2011 개정본. 두 문서를 같이 검색되게 두고, 충돌하면 이쪽이 우선한다.
+
+  - doc_id: VN-CERT-FOOD-15-2018
+    country: VN
+    document_type: CERTIFICATION
+    category_code: food
+    title: Nghị định 15/2018/NĐ-CP — 식품안전법 시행령 (자가공표)
+    source_url: https://vcci.com.vn/legal-document/nghi-dinh-152018nd-cp-huong-dan-luat-an-toan-thuc-pham
+    publisher: Chính phủ Việt Nam
+    effective_from: 2018-02-02
+    language: vi
+    review_status: DRAFT
+    notes: 포장 가공식품·건강기능식품 자가공표 의무. 식품 카테고리 RESTRICTED 근거.

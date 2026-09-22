@@ -125,11 +125,17 @@ Spring/dev_bff가 price·shipping·options·stockNote를 ko/local에 채워 FE `
 
 | 파일 | VN | SG | TH | 출처 |
 |---|---|---|---|---|
-| fee_schedules | 커미션 4~9%(카테고리), 거래 5%, 결제 2%, 관세 MFN/VKFTA, VAT 10%, de minimis | 커미션, GST 9%, 관세 0% | 커미션, 관세 ~10%, VAT 7%, ฿1,500 기준 | Shopee 셀러센터 수수료 공지, ASEAN Tariff Finder |
+| fee_schedules | 커미션 4~9%(카테고리), 거래 5%, 결제 2%, 관세 MFN/VKFTA, VAT 10% | 커미션, GST 9%, 관세 0% | 커미션, 관세 ~10%, VAT 7% | Shopee 셀러센터 수수료 공지, ASEAN Tariff Finder |
 | shipping_rates | SLS·직배송 무게구간(0.5kg 단위) 요율·ETA | 〃 | 〃 | Shopee SLS 요율표, 우체국 EMS/K-Packet |
 | shopee_categories | 뷰티·굿즈·생활 등 FE 11종 카테고리에 대응하는 leaf 30~50개 + 속성 스키마 | 〃 | 〃 | Shopee 카테고리 트리(셀러센터 수동 캡처 → JSON) |
 | policies (RAG) | 금지·제한 품목, 화장품 CPN, 세관 절차, 반품 정책, Shopee VN 정책 20~40건 | 금지 품목·GST·IMDA 5~10건 | 금지 품목·FDA·관세 5~10건 | 각국 세관, Shopee 정책 페이지 |
 | culture | 금기·과장 표현 사전 | 〃 | 〃 | 직접 작성 |
+
+> **소액 수입물품 면세(de minimis)는 3개국 모두 폐지됐다.** 면세 한도를 YAML 에 넣지 않는다.
+> VN 100만 VND 면세는 2025-02-18 폐지(Quyết định 01/2025/QĐ-TTg), TH ฿1,500 면세는 2026-01-01 폐지(관세청 고시 219/2568),
+> SG 는 2023-01-01 부터 OVR 체제로 S$400 이하도 GST 과세. 한도를 넣으면 관세·VAT 가 빠져 마진이 과대 계산된다.
+> 근거 문서는 `data/policies/manifest.yaml`, 상세는 `docs/TRACEABILITY.md` §7-1.
+
 FE 목 값(VN 관세 6%/VAT 10%, SG 0%/GST 9%, TH 10%/7%, 배송 USD 4.5/6.8 등)을 **초기 YAML 값**으로 넣어 두면 화면이 목과 비슷하게 나와 데모 일관성이 좋다. 실제 값은 기획 확인 후 교체.
 
 ## 7. 우선순위와 7주 일정 (FE 데모 관통 순서대로)
