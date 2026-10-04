@@ -1,0 +1,14 @@
+{
+  "category_id": "toys-plush",
+  "attributes": [
+    {"key": "brand", "value": "말랑 프렌즈 (Mallang Friends)"},
+    {"key": "character", "value": "모카 · 코코 · 포미 · 베리"},
+    {"key": "material", "value": "폴리에스터 100% 극세사"},
+    {"key": "size", "value": "20cm / 30cm"},
+    {"key": "origin", "value": "대한민국"},
+    {"key": "age", "value": "만 14세 이상 소장용"}
+  ],
+  "option1": {"name": "색상", "label": "제공 색상", "values": ["모카 (블루)", "코코 (블랙)", "포미 (화이트)", "베리 (퍼플)"]},
+  "option2": {"name": "사이즈", "label": "제공 사이즈", "values": ["20cm", "30cm"]},
+  "stock_hint": "옵션 조합 8개 기준 조합당 10~40개, 인기 색상의 20cm 위주로 총 150개 안팎에서 시작하세요."
+}

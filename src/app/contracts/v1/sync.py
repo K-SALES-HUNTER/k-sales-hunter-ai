@@ -113,7 +113,10 @@ class CategoryAttr(CamelModel):
 
 
 class OptionSpec(CamelModel):
+    #: 재고 매트릭스·상세페이지 옵션 표기용 짧은 이름. 예) 색상
     name: str
+    #: 판매 정보 화면의 입력 라벨. 카테고리가 정한다. 예) 제공 색상
+    label: str = ""
     values: list[str] = Field(default_factory=list)
 
 
@@ -122,17 +125,24 @@ class SalesSuggestRequest(CamelModel):
     product: ProductSnapshot
     #: 사용자가 이미 고른 카테고리가 있으면 그 안에서 속성만 채운다.
     category_id: str | None = None
+    #: 분석 결과의 검색 키워드. 있으면 카테고리 후보 추리기에 함께 쓴다.
+    keywords: list[str] = Field(default_factory=list)
 
 
 class SalesSuggestResponse(CamelModel):
     schema_version: str = SCHEMA_VERSION
     category_id: str = ""
     category_label: str = ""
+    #: 현지어 카테고리 경로. 상세페이지 breadcrumb 에 쓴다.
+    category_label_local: str = ""
+    #: 후보로 보여줄 카테고리. 첫 번째가 추천값이다.
+    category_options: list[dict] = Field(default_factory=list)
     category_attrs: list[CategoryAttr] = Field(default_factory=list)
     option1: OptionSpec | None = None
     option2: OptionSpec | None = None
     #: 옵션당 초기 재고 제안 한 줄
     stock_hint: str = ""
+    catalog_version: str = ""
 
 
 # ── copilot/messages ────────────────────────────────────────────────────
