@@ -1,0 +1,31 @@
+{
+  "name": "Gấu Bông Nhân Vật Mallang Friends 20cm · 30cm - 4 Mẫu Lựa Chọn Chính Hãng",
+  "usps": [
+    "Hàng chính hãng có bản quyền từ Hàn Quốc",
+    "Vải nhung polyester siêu mềm · Giặt tay được",
+    "4 nhân vật · Chọn size 20cm / 30cm",
+    "Gửi trực tiếp từ Hàn Quốc · Nhận sau 4~7 ngày"
+  ],
+  "intro": "Mallang Friends là bộ sưu tập gấu bông nhân vật chính hãng đến từ Hàn Quốc. Sản phẩm dành cho bạn yêu thích sưu tầm đồ nhân vật dễ thương hoặc muốn trang trí góc học tập.",
+  "features": "Vải nhung polyester siêu mềm, đường chỉ chắc chắn và có thể giặt tay. Bạn có thể chọn bốn nhân vật Mocha, Coco, Pomi và Berry với hai kích thước 20cm và 30cm.",
+  "benefits": "Kích thước vừa vặn để đặt đầu giường hoặc bàn làm việc. Sản phẩm được đóng trong hộp quà nên rất hợp làm quà sinh nhật hay quà Tết, và sưu tầm đủ bốn nhân vật cũng rất thú vị.",
+  "call_to_action": "Hãy chọn nhân vật và kích thước trong phần phân loại. Hàng được gửi trực tiếp từ Seoul, Hàn Quốc và thường đến tay bạn trong 4~7 ngày.",
+  "specs": [
+    {"label": "Danh mục", "value": "Đồ Chơi & Sở Thích › Thú Nhồi Bông › Gấu Bông Nhân Vật"},
+    {"label": "Thương hiệu", "value": "Mallang Friends"},
+    {"label": "Nhân vật", "value": "Mocha · Coco · Pomi · Berry"},
+    {"label": "Chất liệu", "value": "Vải nhung polyester 100%"},
+    {"label": "Kích thước", "value": "20cm / 30cm"},
+    {"label": "Xuất xứ", "value": "Hàn Quốc"},
+    {"label": "Độ tuổi", "value": "Từ 14 tuổi trở lên (hàng sưu tầm)"},
+    {"label": "Trọng lượng", "value": "250 g"},
+    {"label": "Gửi từ", "value": "Hàn Quốc"},
+    {"label": "Tồn kho", "value": "156 sản phẩm"},
+    {"label": "Bảo quản", "value": "Giặt tay ở nhiệt độ dưới 30°C"},
+    {"label": "Đóng gói", "value": "Hộp quà + túi chống ẩm"}
+  ],
+  "options": [
+    {"label": "Màu sắc", "values": ["Mocha (Xanh)", "Coco (Đen)", "Pomi (Trắng)", "Berry (Tím)"]},
+    {"label": "Kích thước", "values": ["20cm", "30cm"]}
+  ]
+}

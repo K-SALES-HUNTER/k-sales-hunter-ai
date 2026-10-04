@@ -133,12 +133,10 @@ async def _run_content(command: ContentCommand) -> None:
     ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id)
 
     async def execute() -> dict:
-        # TODO(강근우): core/graph/content.py 로 교체
-        from app.contracts.v1 import ContentResult
+        from app.core.graph.content import run_content
 
-        return ContentResult(job_id=command.job_id, locale=command.locale).model_dump(
-            by_alias=True, mode="json"
-        )
+        result = await run_content(command)
+        return result.model_dump(by_alias=True, mode="json")
 
     await _guard(command.job_id, ctx, execute, final_step=JobStep.LOCALIZE)
 

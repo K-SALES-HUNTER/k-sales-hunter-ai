@@ -116,6 +116,15 @@ class JobContext:
     def mark_country(self, country: str, status: CountryStatus) -> None:
         self.status[country] = status
 
+    async def report_step(self, step: JobStep, progress: float) -> None:
+        """국가 개념이 없는 잡(상세페이지·이미지)의 단계 갱신."""
+        self.step = step
+        if self.detached:
+            return
+        from app.core.jobs import store
+
+        await store.patch(self.job_id, step=step.value, progress=round(progress, 3))
+
 
 #: 노드가 실행 중인 잡. runner 가 set 하고 노드가 get 한다.
 current_job: ContextVar[JobContext | None] = ContextVar("current_job", default=None)
