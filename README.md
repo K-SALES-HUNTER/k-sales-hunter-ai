@@ -44,7 +44,8 @@ alembic upgrade head
 4. 개발 서버 실행
 Bash
 # FastAPI 개발 서버 띄우기
-uvicorn app.entrypoints.http:app --reload
+# Windows 는 --loop 옵션이 필요하다 (Proactor 루프는 psycopg 비동기 모드 미지원). make dev 와 같다
+uvicorn app.entrypoints.http:app --reload --app-dir src --loop asyncio:SelectorEventLoop
 
 
 ### 📂 프로젝트 폴더 및 파일 역할 명세서

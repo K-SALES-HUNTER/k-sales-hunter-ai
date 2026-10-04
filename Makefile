@@ -16,7 +16,8 @@ revision:  ## 마이그레이션 생성  예) make revision m="add jobs"
 	alembic revision --autogenerate -m "$(m)"
 
 dev:  ## 개발 서버 (http://localhost:8000/docs)
-	uvicorn app.entrypoints.http:app --reload --port 8000 --app-dir src
+	# --loop: Windows 기본 Proactor 루프는 psycopg 비동기 모드를 못 쓴다. Selector 는 모든 OS 에서 동작한다
+	uvicorn app.entrypoints.http:app --reload --port 8000 --app-dir src --loop asyncio:SelectorEventLoop
 
 test:  ## 테스트 (실 LLM 호출 제외)
 	pytest -m "not live" -q
