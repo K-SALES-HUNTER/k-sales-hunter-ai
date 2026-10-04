@@ -38,6 +38,9 @@ log = get_logger(mod="runner")
 
 _semaphore: asyncio.Semaphore | None = None
 _running: dict[str, asyncio.Task] = {}
+#: 취소 시 태스크를 바로 끊는 잡. 이미지 생성은 API 호출 하나가 20~40초라
+#: 노드 경계까지 기다리면 프론트가 그동안 '취소 요청됨'에 머문다.
+_hard_cancel: set[str] = set()
 
 
 def _get_semaphore() -> asyncio.Semaphore:
@@ -80,20 +83,33 @@ async def submit_image(command: ImageCommand) -> None:
         trace_id=command.trace_id,
     )
     _spawn(command.job_id, _run_image(command))
+    _hard_cancel.add(command.job_id)
 
 
 def _spawn(job_id: str, coro) -> None:  # noqa: ANN001
     task = asyncio.create_task(coro, name=f"job:{job_id}")
     _running[job_id] = task
-    task.add_done_callback(lambda _: _running.pop(job_id, None))
+    task.add_done_callback(lambda _: _forget(job_id))
+
+
+def _forget(job_id: str) -> None:
+    _running.pop(job_id, None)
+    _hard_cancel.discard(job_id)
 
 
 async def cancel(job_id: str) -> bool:
     """취소 요청만 남긴다. 실행 중인 노드는 끝까지 간다.
 
     프론트에는 '취소 요청됨 -> 취소됨' 2단계로 보인다. 최대 한 노드 실행 시간만큼 지연된다.
+    이미지 잡만 예외로 태스크를 바로 끊는다 (_hard_cancel).
     """
-    return await store.request_cancel(job_id)
+    running = (await store.get(job_id)).status is JobStatus.RUNNING
+    requested = await store.request_cancel(job_id)
+    task = _running.get(job_id)
+    #: 대기 중인 잡은 플래그만 남긴다. 세마포어를 잡을 때 _guard 가 보고 멈춘다.
+    if requested and running and job_id in _hard_cancel and task is not None:
+        task.cancel()
+    return requested
 
 
 # ── 실행 ────────────────────────────────────────────────────────────────
@@ -130,7 +146,8 @@ async def _run_analysis(command: AnalysisCommand) -> None:
 
 
 async def _run_content(command: ContentCommand) -> None:
-    ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id)
+    #: 국가가 없는 잡은 step 을 직접 준다. 안 주면 flush 가 분석 단계(MARGIN)를 쓴다.
+    ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id, step=JobStep.DRAFT)
 
     async def execute() -> dict:
         from app.core.graph.content import run_content
@@ -142,15 +159,13 @@ async def _run_content(command: ContentCommand) -> None:
 
 
 async def _run_image(command: ImageCommand) -> None:
-    ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id)
+    ctx = JobContext(job_id=command.job_id, trace_id=command.trace_id, step=JobStep.GENERATE)
 
     async def execute() -> dict:
-        # TODO(강근우): core/services/image_gen.py 로 교체
-        from app.contracts.v1 import ImageResult
+        from app.core.services import image_gen
 
-        return ImageResult(job_id=command.job_id, prompt=command.prompt).model_dump(
-            by_alias=True, mode="json"
-        )
+        result = await image_gen.generate(command)
+        return result.model_dump(by_alias=True, mode="json")
 
     await _guard(command.job_id, ctx, execute, final_step=JobStep.GENERATE)
 
@@ -169,6 +184,10 @@ async def _guard(
 
     async with _get_semaphore():
         try:
+            #: 대기 중에 취소됐으면 시작하지 않는다.
+            #: mark_running 이 취소 플래그를 RUNNING 으로 덮어쓰기 전에 본다.
+            if await store.is_cancel_requested(job_id):
+                raise JobCancelled(f"job {job_id} 대기 중 취소됨")
             await store.mark_running(job_id)
             await ctx.flush()
             result = await asyncio.wait_for(execute(), timeout=settings.job_timeout_sec)
@@ -178,7 +197,8 @@ async def _guard(
             )
             log.info("잡 완료")
 
-        except JobCancelled:
+        except (JobCancelled, asyncio.CancelledError):
+            #: CancelledError 는 _hard_cancel 잡의 task.cancel() 에서 온다
             log.info("잡 취소됨")
             await store.finish(
                 job_id, status=JobStatus.CANCELLED, error_code=ErrorCode.JOB_CANCELLED

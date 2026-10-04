@@ -33,3 +33,5 @@ class ImageResult(CamelModel):
     prompt: str = ""
     #: 페르소나·스타일 지시가 붙은 실제 전송 프롬프트. 디버그용.
     resolved_prompt: str = ""
+    #: 같은 요청으로 이미 만든 파일을 다시 준 경우
+    cached: bool = False
