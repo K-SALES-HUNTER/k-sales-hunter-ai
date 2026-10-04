@@ -127,6 +127,13 @@ Base URL: FE `.env`의 `VITE_API_BASE_URL` → Spring `/api/v1`. 인증: `Author
 `PUT .../sales-info` {selectedTier, finalPrice, shippingMethod, category, attrs{}, useOptions, option1{name,values}, option2, stock:[{option1,option2,qty,extraPrice}]} → 저장, `hasSalesInfo=true`. 옵션 ≤2단, 조합 ≤50 검증.
 `POST .../pricing/quote` {price, shippingMethod, packaging?} → `{unitProfitKrw, marginRate, breakevenUnits, costRows[]}` (FE `calcUnitProfit` 대체, 디바운스 300ms)
 
+> **구현 메모 (dev_bff, 2026-10-04 강근우)** — 아래는 선택 필드 추가와 세부 규칙이다. 기존 필드 이름은 바꾸지 않았다.
+> - `GET /shopee/categories?country=VN` → `[{value, label, labelLocal}]`. `value` 는 국가 공통 slug(`toys-plush`). 실제 Shopee category_id 는 파일의 `shopeeId`(미확인 시 null). 원본은 `data/shopee_categories/{cc}.json`.
+> - `GET /shopee/categories/{catId}/attributes?country=` → `[{key, label, value:"", required}]`.
+> - `GET .../sales-info` 추가 필드: `stockHint`(초기 재고 제안 한 줄), `appliedBadges`. `optionLevel1/2` 는 `{name, label, values}` (FE 목과 같음, `label` = "제공 색상"). `shopeeCategoryOptions` 첫 항목이 AI 추천값. 첫 조회 때 AI 추천을 한 번 만들어 둔다.
+> - `POST .../sales-info/suggest` {category?} → `{shopeeCategoryOptions, shopeeCategoryDefault, categoryAttrs, optionLevel1, optionLevel2, stockHint}`. `category` 를 주면 그 카테고리 안에서만 속성·옵션을 채운다.
+> - `PUT .../sales-info` 검증 실패는 `422 {detail: ["옵션 조합은 최대 50개입니다 (현재 55개)", …]}`. 2단만 있고 1단 없음, 1단 값 0개, 조합 50 초과, 카테고리 미선택을 막는다.
+
 ### 2-4. 상세 페이지·이미지
 
 `POST /products/{id}/countries/{cc}/detail-page` → `{ "jobId":"c_12_VN_1" }` (판매정보 없으면 409)
@@ -144,6 +151,16 @@ Base URL: FE `.env`의 `VITE_API_BASE_URL` → Spring `/api/v1`. 인증: `Author
 `POST .../detail-page/images` multipart {target: product|detail} → `{id,label,src}`; `DELETE .../detail-page/images/{imgId}`; `PUT .../detail-page/images/main` {imageId}.
 `POST .../detail-page/images/generate` → FE `GenerateImageParams` 그대로 `{target, prompt, mode:"basic"|"model", modelId?, referenceIds[]}` → `{ "jobId":"i_…" }`
 `GET /image-jobs/{jobId}` → `{status:"RUNNING"|"DONE"|"FAILED", progress, result: {id,src,prompt} | null}`; `POST /image-jobs/{jobId}/cancel`. 저장은 FE가 `POST .../detail-page/images` {generatedImageId, replaceImageId?}로 확정(재생성 시 원본 id 유지 — FE `replaceImage` 로직).
+
+> **구현 메모 (dev_bff, 2026-10-04 강근우)**
+> - `POST .../detail-page` → `202 {jobId}`. 판매 정보가 없으면 409. 다시 부르면 새로 만들고 셀러 수정본은 버린다.
+> - `GET .../detail-page` 생성 중 `202 {status:"GENERATING", jobId, step:"DRAFT"|"REVIEW"|"LOCALIZE", progress}`, 실패 `200 {status:"FAILED", jobId, errorCode}`. 완료 응답에 `edited`(셀러가 텍스트를 고쳤는지) 추가. `qualityIssues[]` = `{kind, detail, hardBlock}` — `hardBlock` 이 하나라도 있으면 `NEEDS_REVIEW` 이고 사람 확인 전 업로드 불가.
+> - `content.ko/local.description` 은 소개·특징·혜택·구매유도 4단락을 빈 줄(`\n\n`)로 잇는다. FE 는 `white-space: pre-line` 으로 그리면 된다.
+> - `content.local.options` 는 옵션값까지 현지어로 번역돼 있다 (예: `Berry (Tím)`). 재고 매트릭스와 개수가 다르면 원문을 쓴다.
+> - `PATCH .../detail-page/content` 응답은 갱신된 상세페이지 전체 (GET 과 같은 모양).
+> - **경로 분리 (승인 필요)**: 생성 결과 확정은 multipart 업로드와 같은 경로에서 받기 어려워 `POST .../detail-page/images/generated` {generatedImageId(=이미지 jobId), target, replaceImageId?} → `{id, label, src, prompt}` 로 나눴다. 업로드는 `POST .../detail-page/images` multipart {file, target}.
+> - `GET /image-jobs/{jobId}` status 에 `CANCELLED` 추가, `errorCode` 추가 (`DAILY_BUDGET_EXCEEDED` 등). 취소는 생성 중이어도 바로 끊긴다.
+> - `GET /uploads/{name}` — 업로드·생성 이미지 서빙 (dev_bff 전용. Spring 은 S3 URL).
 
 ### 2-5. 코파일럿
 
@@ -168,7 +185,7 @@ FE 스토어는 대화를 세션 단위로 들고 있으므로 Spring은 `chat_m
 | POST | `/internal/ai/image-jobs` / GET / cancel | 잡 | `result {imageUrl \| base64, prompt}` |
 | POST | `/internal/ai/product-fill` | 동기 (≤15s) | `{category, description, sellingPoints, mainTarget, features{}, imageUsed}` |
 | POST | `/internal/ai/pricing/quote` | 동기 (ms, LLM 없음) | `{shippingOptions[], scenarios[3]?, quote{unitProfitKrw, marginRate, breakevenUnits, costRows[]}, fx, feeScheduleVersion}` |
-| POST | `/internal/ai/sales-info/suggest` | 동기 (≤10s) | `{categoryId, categoryAttrs[], option1, option2, stockHint}` |
+| POST | `/internal/ai/sales-info/suggest` | 동기 (≤10s) | `{categoryId, categoryLabel, categoryLabelLocal, categoryOptions[], categoryAttrs[], option1{name,label,values}, option2, stockHint, catalogVersion}` |
 | POST | `/internal/ai/copilot/messages` | 동기 (≤20s) | `{answer, intent, action?}` |
 | POST | `/internal/ai/sales-insight` | 동기 (선택) | `{headline, description, performanceNote, priceNote, impacts[]}` |
 | GET | `/internal/ai/health` | | |
