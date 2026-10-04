@@ -45,10 +45,12 @@ from app.contracts.v1 import (
     ImageMode,
     ImageResult,
     ImageTarget,
+    JobKind,
     JobStatus,
     MarketProfile,
     OptionSpec,
     Packaging,
+    PartialSpec,
     PriceScenario,
     ProductFillRequest,
     ProductSnapshot,
@@ -290,19 +292,68 @@ async def create_product(body: ProductBody) -> dict:
     return {"productId": product_id, "analysisJobId": job_id}
 
 
+#: 상품 수정 화면 필드 -> (변경 내역 라벨, 분석 계약 필드, 표시 형식)
+EDITABLE_FIELDS = {
+    "name": ("상품명", "product.name", str),
+    "category": ("카테고리", "product.category", str),
+    "costPrice": ("공급 원가", "product.supplyCostKrw", lambda v: f"{int(v):,}원"),
+    "weight": ("무게", "product.weightG", lambda v: f"{int(v):,}g"),
+    "description": ("상품 설명", "product.description", str),
+    "sellingPoints": ("셀링 포인트", "product.sellingPoint", str),
+    "mainTarget": ("메인 타겟", "product.mainTarget", str),
+}
+
+
+@router.put("/products/{product_id}")
+async def update_product(product_id: int, body: ProductBody) -> dict:
+    """바뀐 필드만큼만 재분석한다. 원가만 바꾸면 마진부터, 상품명이면 처음부터."""
+    product = _require_product(product_id)
+    changes, changed_fields = [], []
+    for key, (label, field, fmt) in EDITABLE_FIELDS.items():
+        before, after = product[key], getattr(body, key)
+        if before != after:
+            changes.append({"label": label, "before": fmt(before), "after": fmt(after)})
+            changed_fields.append(field)
+            product[key] = after
+    if body.imageUrls != product["images"]:
+        changes.append(
+            {
+                "label": "상품 이미지",
+                "before": f"{len(product['images'])}장",
+                "after": f"{len(body.imageUrls)}장",
+            }
+        )
+        changed_fields.append("product.imageUrls")
+        product["images"] = body.imageUrls
+
+    if not changes:
+        return {"changes": [], "analysisJobId": None}
+    job_id = await _start_analysis(product_id, changed_fields)
+    #: 보고서는 새 결과가 나올 때까지 202 를 준다. 이전 결과는 잡 입력에 실려 있다.
+    product["result"] = None
+    return {"changes": changes, "analysisJobId": job_id}
+
+
 # ── 분석 잡 ─────────────────────────────────────────────────────────────
 
 
-async def _start_analysis(product_id: int) -> str:
+async def _start_analysis(product_id: int, changed_fields: list[str] | None = None) -> str:
+    """changed_fields 와 이전 결과가 있으면 PARTIAL 로 돌린다 (R-000-05)."""
     product = _products[product_id]
     job_id = f"a_{product_id}_{next(_job_seq)}"
+    previous = product.get("result")
+    partial = changed_fields is not None and previous is not None
     command = AnalysisCommand(
         job_id=job_id,
         trace_id=uuid.uuid4().hex,
+        job_type=JobKind.PARTIAL if partial else JobKind.FULL,
         countries=list(SUPPORTED_COUNTRIES),
         product=_snapshot(product),
         market_profile=MarketProfile(),
         preferences=AnalysisPreferences(),
+        partial=PartialSpec(changed_fields=changed_fields, previous_result=previous)
+        if partial
+        else None,
     )
     await runner.submit_analysis(command)
     _jobs_by_product[product_id] = job_id
@@ -1097,6 +1148,8 @@ def _content_command(
         analysis=AnalysisDigest(
             positioning=entry.insight.positioning.value if entry.insight else "",
             positioning_label=entry.insight.positioning_label if entry.insight else "",
+            keywords=list((entry.product_features or {}).get("keywords") or []),
+            usps=list((entry.product_features or {}).get("usps") or []),
             risk_flags=[item.text for item in (entry.risk.warnings if entry.risk else [])],
         ),
         market_profile=MarketProfile(),
