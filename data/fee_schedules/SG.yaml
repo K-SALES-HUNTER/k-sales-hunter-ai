@@ -1,0 +1,14 @@
+# 싱가포르 Shopee 수수료·GST. 관세 0, GST 는 판매가 기준(OVR 체제).
+version: sg-shopee-2026.09
+effective_from: 2026-09-01
+source: Shopee SG 셀러센터 수수료 공지 · IRAS Overseas Vendor Registration
+currency: SGD
+commission_rate: 0.05
+transaction_fee_rate: 0.02
+payment_fee_rate: 0.02
+infra_fee_local: 0
+duty_rate: 0.00
+vat_rate: 0.09                 # GST 9%
+tax_base: SALE_PRICE
+tariff_mode: GST
+# de minimis 없음 — 2023-01-01 부터 S$400 이하도 GST 과세

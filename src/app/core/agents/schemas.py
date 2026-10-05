@@ -97,4 +97,17 @@ class CopilotAnswer(BaseModel):
     action_type: str = Field(
         description="없으면 빈 문자열. ADD_COUNTRY | REANALYZE | REGENERATE_DETAIL"
     )
-    action_params: dict = Field(default_factory=dict)
+    #: strict json_schema 는 자유 키 dict 를 받지 않는다. 명령 3종은 국가 하나면 충분하다.
+    action_country: str = Field(description="명령 대상 국가 코드. 없으면 빈 문자열. 예) PH")
+
+
+# ── MARGIN explain (담당: 이동건) ───────────────────────────────────────
+
+
+class MarginExplanation(BaseModel):
+    """마진 판정 해설. 숫자는 입력값만 인용하고 새로 만들지 않는다."""
+
+    explanation: str = Field(description="판정 근거와 위험 구간 2~3문장")
+    scenario_summaries: list[str] = Field(
+        description="Low·추천·High 순서로 3안 각각의 한 줄 요약. 정확히 3개"
+    )

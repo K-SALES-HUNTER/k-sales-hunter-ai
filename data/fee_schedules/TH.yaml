@@ -1,0 +1,14 @@
+# 태국 Shopee 수수료·관세·VAT.
+version: th-shopee-2026.09
+effective_from: 2026-09-01
+source: Shopee TH 셀러센터 수수료 공지 · 태국 관세청
+currency: THB
+commission_rate: 0.05
+transaction_fee_rate: 0.03
+payment_fee_rate: 0.02
+infra_fee_local: 0
+duty_rate: 0.10
+vat_rate: 0.07
+tax_base: CIF
+tariff_mode: MFN
+# de minimis 없음 — 2026-01-01 폐지, 1밧부터 과세 (관세청 고시 219/2568)

@@ -24,6 +24,8 @@ class FxProvider(Protocol):
 
     async def rate(self, currency: str) -> float: ...
 
+    async def as_of(self, currency: str) -> str: ...
+
 
 @lru_cache
 def get_market_provider() -> MarketDataProvider:

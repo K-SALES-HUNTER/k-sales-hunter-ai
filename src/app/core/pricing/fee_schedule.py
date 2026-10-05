@@ -35,7 +35,7 @@ from app.observability.logging import get_logger
 log = get_logger(mod="fee_schedule")
 
 #: YAML 이 아직 없을 때 쓰는 임시값. 프론트 목 데이터와 같은 숫자라 화면이 비슷하게 뜬다.
-#: TODO(이동건): data/fee_schedules/*.yaml 작성 후 이 표를 지운다.
+#: data/fee_schedules/*.yaml 이 우선이고, 파일이 빠졌을 때만 이 표로 떨어진다.
 _FALLBACK: dict[str, dict] = {
     "VN": {
         "version": "vn-fallback",
@@ -90,6 +90,11 @@ class FeeSchedule:
     #: CIF = (원가+배송비) 기준 과세, SALE_PRICE = 판매가 기준 과세
     tax_base: str
     tariff_mode: str
+    #: VKFTA(한-베트남 FTA) 세율. 원산지증명(Form VK)이 있을 때만 적용된다.
+    #: 품목별로 달라 YAML 에 값이 있을 때만 쓴다.
+    #: 없으면 None → 민감도에서 MFN/VKFTA 비교를 생략한다.
+    #: 실효세율은 MFN 과 VKFTA 중 낮은 쪽이다 (docs/TRACEABILITY.md §7-2).
+    duty_rate_vkfta: Decimal | None = None
 
     @property
     def platform_fee_rate(self) -> Decimal:
@@ -99,6 +104,11 @@ class FeeSchedule:
 
 @lru_cache
 def load(country: str) -> FeeSchedule:
+    """국가 요율을 읽는다. 프로세스당 1회만 파일을 읽고 캐시한다.
+
+    요율을 바꾸면 서버를 재시작해야 반영된다. 바뀐 요율은 version 이 달라
+    결과의 fee_schedule_version 으로 어떤 요율로 계산했는지 구분된다.
+    """
     path = DATA_DIR / "fee_schedules" / f"{country}.yaml"
     if path.exists():
         raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -121,4 +131,7 @@ def load(country: str) -> FeeSchedule:
         vat_rate=dec("vat_rate"),
         tax_base=str(raw.get("tax_base", "CIF")),
         tariff_mode=str(raw.get("tariff_mode", "MFN")),
+        duty_rate_vkfta=(
+            Decimal(str(raw["duty_rate_vkfta"])) if raw.get("duty_rate_vkfta") is not None else None
+        ),
     )

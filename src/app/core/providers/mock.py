@@ -40,3 +40,6 @@ class MockMarketProvider:
 class MockFxProvider:
     async def rate(self, currency: str) -> float:
         return MOCK_RATES.get(currency, 1.0)
+
+    async def as_of(self, currency: str) -> str:
+        return "mock"

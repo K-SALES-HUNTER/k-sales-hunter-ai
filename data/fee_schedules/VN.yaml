@@ -1,0 +1,16 @@
+# 베트남 Shopee 수수료·관세·VAT. 코드 상수로 박지 않고 버전 데이터로 둔다.
+# 새 요율은 version·effective_from 을 올린 새 파일로 교체한다. 계산 결과에 version 이 실린다.
+version: vn-shopee-2026.09
+effective_from: 2026-09-01
+source: Shopee VN 셀러센터 수수료 공지 · ASEAN Tariff Finder
+currency: VND
+commission_rate: 0.04          # 카테고리별 4~9%, 뷰티 기준
+transaction_fee_rate: 0.032
+payment_fee_rate: 0.02
+infra_fee_local: 0
+duty_rate: 0.06                # MFN
+duty_rate_vkfta: null          # 원산지증명(Form VK) 시 VKFTA 세율. 품목별 확인 후 입력
+vat_rate: 0.10
+tax_base: CIF                  # CIF | SALE_PRICE
+tariff_mode: MFN               # MFN | VKFTA | NONE | GST
+# de minimis 없음 — 2025-02-18 폐지 (Quyết định 01/2025/QĐ-TTg)

@@ -41,11 +41,16 @@ def _profit_sub_scores(country: dict) -> dict[str, float]:
     band = (country.get("competition") or {}).get("price_band_krw")
     customs_level = (country.get("customs") or {}).get("level", CustomsLevel.UNKNOWN.value)
 
+    #: 환율 -10% 민감도. 없으면(구버전 결과) 보수적으로 15% 깎인다고 본다
+    fx_down = (pricing.get("sensitivity") or {}).get("fx_down_10") or {}
+    margin_fx_down = float(fx_down.get("margin_rate", margin_rate * 0.85))
+    #: 가격 적합성은 밴드 보정 전 가격으로 잰다. 보정 후 추천가는 늘 밴드 안이라 항상 만점이 된다
+    target_price = int(pricing.get("target_price_krw") or recommended.get("price_krw", 0))
+
     return {
         "unit_margin": scoring.unit_margin_score(margin_rate),
-        # TODO(이동건): 환율 -10% 시나리오가 생기면 실제 값으로 교체
-        "cost_stability": scoring.cost_stability_score(margin_rate, margin_rate * 0.85),
-        "price_fit": scoring.price_fit_score(int(recommended.get("price_krw", 0)), band),
+        "cost_stability": scoring.cost_stability_score(margin_rate, margin_fx_down),
+        "price_fit": scoring.price_fit_score(target_price, band),
         "bep_feasibility": scoring.bep_feasibility_score(recommended.get("break_even_units")),
         "risk_stability": scoring.risk_stability_score(customs_level),
     }

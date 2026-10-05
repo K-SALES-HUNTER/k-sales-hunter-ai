@@ -251,6 +251,8 @@ class PricingResult(CamelModel):
     applied_badges: list[str] = Field(default_factory=list)
     #: 환율 ±10%, 수수료·VKFTA 적용 여부별 시나리오
     sensitivity: dict = Field(default_factory=dict)
+    #: 경쟁가 밴드로 보정하기 전, 목표 마진을 지키는 가격. critic·가격 적합성 점수가 쓴다.
+    target_price_krw: int | None = None
 
 
 class ChecklistItem(CamelModel):
