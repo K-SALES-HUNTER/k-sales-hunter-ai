@@ -44,6 +44,14 @@
           },
           "title": "Breadcrumb",
           "type": "array"
+        },
+        "options": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Options",
+          "type": "array"
         }
       },
       "required": [
@@ -133,6 +141,11 @@
       "default": 0,
       "title": "Regenerationcount",
       "type": "integer"
+    },
+    "rulesVersion": {
+      "default": "",
+      "title": "Rulesversion",
+      "type": "string"
     }
   },
   "required": [

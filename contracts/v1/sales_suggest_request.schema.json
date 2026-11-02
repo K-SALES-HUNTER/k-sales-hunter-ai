@@ -116,6 +116,13 @@
       ],
       "default": null,
       "title": "Categoryid"
+    },
+    "keywords": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Keywords",
+      "type": "array"
     }
   },
   "required": [
