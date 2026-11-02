@@ -1,0 +1,39 @@
+{
+  "description": "셀러가 고친 한국어 상품명·설명을 현지어본에 다시 옮긴다 (PATCH .../detail-page/content).",
+  "properties": {
+    "country": {
+      "title": "Country",
+      "type": "string"
+    },
+    "locale": {
+      "default": "vi",
+      "title": "Locale",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "previousName": {
+      "default": "",
+      "title": "Previousname",
+      "type": "string"
+    },
+    "previousDescription": {
+      "default": "",
+      "title": "Previousdescription",
+      "type": "string"
+    }
+  },
+  "required": [
+    "country",
+    "name",
+    "description"
+  ],
+  "title": "RetranslateRequest",
+  "type": "object"
+}

@@ -9,6 +9,7 @@
     POST /internal/ai/pricing/quote          마진 재계산 (동기, LLM 없음)
     POST /internal/ai/sales-info/suggest     판매 정보 추천 (동기)
     POST /internal/ai/copilot/messages       AI 패널 (동기)
+    POST /internal/ai/content/retranslate    상세페이지 수정본 재번역 (동기)
     GET  /internal/ai/health
 
 인증은 공유 시크릿 헤더 X-Internal-Token + 네트워크 격리다. mTLS 는 과하다.
@@ -38,11 +39,13 @@ from app.contracts.v1 import (
     ProductFillResponse,
     QuoteRequest,
     QuoteResponse,
+    RetranslateRequest,
+    RetranslateResponse,
     SalesSuggestRequest,
     SalesSuggestResponse,
 )
 from app.core.jobs import runner, store
-from app.core.services import copilot, pricing_quote, product_fill, sales_suggest
+from app.core.services import content_edit, copilot, pricing_quote, product_fill, sales_suggest
 from app.errors import ServiceError
 from app.observability.logging import configure_logging, get_logger
 
@@ -119,6 +122,20 @@ async def post_sales_suggest(request: SalesSuggestRequest) -> SalesSuggestRespon
 @internal.post("/copilot/messages", response_model=CopilotResponse)
 async def post_copilot(request: CopilotRequest) -> CopilotResponse:
     return await copilot.answer(request)
+
+
+@internal.post("/content/retranslate", response_model=RetranslateResponse)
+async def post_retranslate(request: RetranslateRequest) -> RetranslateResponse:
+    """셀러가 고친 한국어본 -> 현지어본. 한국어본은 Spring 이 셀러 입력 그대로 저장한다."""
+    translated = await content_edit.retranslate(
+        country=request.country.upper(),
+        locale=request.locale,
+        name=request.name,
+        description=request.description,
+        previous_name=request.previous_name,
+        previous_description=request.previous_description,
+    )
+    return RetranslateResponse(name=translated.name, description=translated.description)
 
 
 @internal.get("/health")

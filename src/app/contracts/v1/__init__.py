@@ -45,6 +45,8 @@ from app.contracts.v1.content import (
     ContentResult,
     PdpDraft,
     QualityIssue,
+    RetranslateRequest,
+    RetranslateResponse,
     SalesInfoSnapshot,
 )
 from app.contracts.v1.enums import (
@@ -178,6 +180,8 @@ __all__ = [
     "Quote",
     "QuoteRequest",
     "QuoteResponse",
+    "RetranslateRequest",
+    "RetranslateResponse",
     "RiskDifficulty",
     "RiskResult",
     "RiskWarning",

@@ -30,6 +30,8 @@ from app.contracts.v1 import (  # noqa: E402
     ProductFillResponse,
     QuoteRequest,
     QuoteResponse,
+    RetranslateRequest,
+    RetranslateResponse,
     SalesSuggestRequest,
     SalesSuggestResponse,
 )
@@ -54,6 +56,8 @@ EXPORTS = {
     "sales_suggest_response": SalesSuggestResponse,
     "copilot_request": CopilotRequest,
     "copilot_response": CopilotResponse,
+    "content_retranslate_request": RetranslateRequest,
+    "content_retranslate_response": RetranslateResponse,
 }
 
 
