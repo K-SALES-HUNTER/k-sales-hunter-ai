@@ -69,9 +69,9 @@
 | R-003-06 | 현지화 상세페이지 자동 생성 (한국어 검수본 + 현지어 업로드본, 같은 구조) | F-24 | DTL-01-01 | `core/graph/content.py` · `core/agents/prompts/content_{draft,localize}.md` | `test_content_graph.py::test_한국어본과_현지어본을_같은_구조로_만든다` · `test_사양_표_기본_행은_판매정보에서_코드가_만든다` | 구현 | 강근우 |
 | R-003-11 | 품질 검수 0~100점 · 미달 시 최대 2회 자동 재생성 | F-24 | DTL-01-01 | `core/content/quality.py` · `core/graph/content.py` (`_after_quality`) | `test_하드컷이면_지적사항을_넣어_다시_쓴다` · `test_2회_재생성해도_미달이면_검수필요로_결과를_준다` · `test_누락_섹션을_감점한다` | 구현 | 강근우 |
 | R-003 (문화 필터) | 금기·과장·상표 표현 제거 (국가별 사전) | F-24 | DTL-01-01 | `core/content/culture.py` · `data/culture/{common,VN,SG,TH}.yaml` | `test_국가별_금기는_그_나라에서만_걸린다` · `test_치환_가능한_과장만_바꾸고_하드컷은_남긴다` · `test_영문은_단어_경계로만_찾는다` | 구현 | 강근우 |
-| R-003 (F-25) | 상세페이지 텍스트 수정 · 현지어 재번역 (사람 수정값 우선) | F-25 | DTL-01-01 | `core/services/content_edit.py` · dev_bff `PATCH .../detail-page/content` | `test_셀러_수정본을_현지어로_다시_옮긴다` · `test_등록부터_상세페이지_수정까지` | 구현 | 강근우 |
+| R-003 (F-25) | 상세페이지 텍스트 수정 · 현지어 재번역 (사람 수정값 우선) | F-25 | DTL-01-01 | `core/services/content_edit.py` · 내부 API `POST /internal/ai/content/retranslate` · Spring `PATCH .../detail-page/content` | `test_셀러_수정본을_현지어로_다시_옮긴다` · `test_content_retranslate.py` 2건 · Spring `DetailPageFlowTest` | 구현 | 강근우 |
 | R-003 (F-26·F-28) | 상품·상세 이미지 AI 생성 (기본 컷 / 모델 컷 4종) | F-26 · F-28 | DTL-01-02 | `core/services/image_gen.py` · `data/models.yaml` · `core/jobs/runner.py` (즉시 취소) | `test_image_gen.py` 8건 (프롬프트·캐시·일일 상한·취소·dev_bff 전 구간) | 구현 (실 API 는 live 미검증) | 강근우 |
-| R-003 (F-27) | 이미지 직접 업로드 · 대표 지정 · 삭제 | F-27 | DTL-01-01 | dev_bff `.../detail-page/images*` → Spring 이관 | `test_상세페이지에서_이미지를_생성해_저장한다` | dev_bff 구현 / Spring 미착수 | 강근우 |
+| R-003 (F-27) | 이미지 직접 업로드 · 대표 지정 · 삭제 | F-27 | DTL-01-01 | Spring `detailpage/DetailPageImageService` · `upload/UploadStorage` (dev_bff 와 같은 응답) | `test_상세페이지에서_이미지를_생성해_저장한다` · Spring `DetailPageFlowTest` | 구현 | 강근우 |
 
 > 확인 필요: R-003 하위 ID 중 06·11·12·13 만 `명세서정리.md` 에서 확인했다. 나머지 행은 기능 ID(F-xx)로 적었다. 정의서가 나오면 하위 ID 로 바꾼다.
 
@@ -141,7 +141,7 @@ R-002-04(환율)의 구현이 `core/providers/` 의 mock 이다. 2주차 실 LLM
 | 라우트 | Spring 담당 |
 |---|---|
 | `GET /shopee/categories` · `GET /shopee/categories/{id}/attributes` · `GET/PUT .../sales-info` · `POST .../sales-info/suggest` | 권수현 (카테고리는 `data/shopee_categories/{cc}.json` 을 그대로 읽으면 된다) |
-| `POST/GET .../detail-page` · `PATCH .../detail-page/content` · `.../detail-page/images*` · `/image-jobs/*` | 강근우 |
+| `POST/GET .../detail-page` · `PATCH .../detail-page/content` · `.../detail-page/images*` · `/image-jobs/*` | 강근우 — **Spring 구현 완료** (`k-sales-hunter-be` `detailpage` 패키지, Testcontainers 통합 테스트) |
 | `PUT /products/{id}` (변경 내역 + PARTIAL 재분석) | 차은호 (products 라우트) |
 
 `POST .../detail-page/images` 는 API 스펙에서 업로드와 생성 결과 확정을 한 경로로 받게 돼 있었다. multipart 와 JSON 을 한 경로에서 받기 어려워 확정은 `POST .../detail-page/images/generated` 로 나눴다 (API_SPEC §2-4 갱신).

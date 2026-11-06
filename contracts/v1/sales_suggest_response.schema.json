@@ -34,6 +34,11 @@
           "title": "Name",
           "type": "string"
         },
+        "label": {
+          "default": "",
+          "title": "Label",
+          "type": "string"
+        },
         "values": {
           "items": {
             "type": "string"
@@ -64,6 +69,19 @@
       "default": "",
       "title": "Categorylabel",
       "type": "string"
+    },
+    "categoryLabelLocal": {
+      "default": "",
+      "title": "Categorylabellocal",
+      "type": "string"
+    },
+    "categoryOptions": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Categoryoptions",
+      "type": "array"
     },
     "categoryAttrs": {
       "items": {
@@ -97,6 +115,11 @@
     "stockHint": {
       "default": "",
       "title": "Stockhint",
+      "type": "string"
+    },
+    "catalogVersion": {
+      "default": "",
+      "title": "Catalogversion",
       "type": "string"
     }
   },

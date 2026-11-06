@@ -269,6 +269,32 @@
           ],
           "default": null
         },
+        "productFeatures": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Productfeatures"
+        },
+        "marketRaw": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marketraw"
+        },
         "completedNodes": {
           "items": {
             "type": "string"

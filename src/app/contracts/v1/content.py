@@ -87,3 +87,20 @@ class ContentResult(CamelModel):
     regeneration_count: int = 0
     #: 적용한 문화 필터 사전 버전 (data/culture)
     rules_version: str = ""
+
+
+class RetranslateRequest(CamelModel):
+    """셀러가 고친 한국어 상품명·설명을 현지어본에 다시 옮긴다 (PATCH .../detail-page/content)."""
+
+    country: str
+    locale: str = "vi"
+    name: str
+    description: str
+    #: 직전 현지어본. 표현·용어를 최대한 유지하게 하는 참고값
+    previous_name: str = ""
+    previous_description: str = ""
+
+
+class RetranslateResponse(CamelModel):
+    name: str
+    description: str

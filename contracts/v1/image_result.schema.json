@@ -23,6 +23,11 @@
       "default": "",
       "title": "Resolvedprompt",
       "type": "string"
+    },
+    "cached": {
+      "default": false,
+      "title": "Cached",
+      "type": "boolean"
     }
   },
   "required": [

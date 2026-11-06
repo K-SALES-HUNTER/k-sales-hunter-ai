@@ -187,6 +187,7 @@ FE 스토어는 대화를 세션 단위로 들고 있으므로 Spring은 `chat_m
 | POST | `/internal/ai/pricing/quote` | 동기 (ms, LLM 없음) | `{shippingOptions[], scenarios[3]?, quote{unitProfitKrw, marginRate, breakevenUnits, costRows[]}, fx, feeScheduleVersion}` |
 | POST | `/internal/ai/sales-info/suggest` | 동기 (≤10s) | `{categoryId, categoryLabel, categoryLabelLocal, categoryOptions[], categoryAttrs[], option1{name,label,values}, option2, stockHint, catalogVersion}` |
 | POST | `/internal/ai/copilot/messages` | 동기 (≤20s) | `{answer, intent, action?}` |
+| POST | `/internal/ai/content/retranslate` | 동기 (≤10s) | `{country, locale, name, description, previousName?, previousDescription?}` → `{name, description}`. PATCH `.../detail-page/content` 의 현지어 재번역 |
 | POST | `/internal/ai/sales-insight` | 동기 (선택) | `{headline, description, performanceNote, priceNote, impacts[]}` |
 | GET | `/internal/ai/health` | | |
 
