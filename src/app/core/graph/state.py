@@ -81,24 +81,22 @@ class AnalysisState(TypedDict, total=False):
 
 
 class ContentState(TypedDict, total=False):
-    """content_graph state (R-003)."""
+    """content_graph state (R-003). 입력은 ContentCommand 하나를 통째로 들고 다닌다."""
 
-    meta: JobMeta
-    country: str
-    locale: str
-    product: dict[str, Any]
-    sales_info: dict[str, Any]
-    analysis: dict[str, Any]
-    market_profile: dict[str, Any] | None
-    revision_instruction: str | None
+    # ── 입력 ──────────────────────────────────────────────
+    command: Any  # contracts.v1.ContentCommand
+    #: 확정 판매정보로 코드가 만든 사양 표 기본 행
+    specs: list[list[str]]
 
-    usps: list[str]
-    draft_ko: dict[str, Any] | None
-    local: dict[str, Any] | None
+    # ── 노드 산출물 ───────────────────────────────────────
+    #: {name, usps[], sections[4], specs[[k, v]]}
+    copy_ko: dict[str, Any] | None
+    #: copy_ko 와 같은 구조 + options
+    copy_local: dict[str, Any] | None
     quality_score: int
     quality_issues: list[dict[str, Any]]
+    quality_passed: bool
     regeneration_count: int
-    status: str
 
 
 class CopilotState(TypedDict, total=False):

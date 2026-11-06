@@ -1,0 +1,71 @@
+# 3개국 공통 문화·표현 필터 사전 (한국어 초안 검수용)
+#
+# banned       하드 컷. 사람 승인 전 통과 불가. 의약품 오인·위조품·허위 인증 표현
+# trademark    하드 컷. 타사 상표·캐릭터. 셀러가 라이선스를 가진 경우 사람이 승인한다
+# exaggeration 소프트. 감점만. replace 가 있으면 코드가 바로 바꾼다
+#
+# 매칭 규칙: 영문은 단어 경계·대소문자 무시, 그 외는 부분 문자열.
+# 짧은 단어는 오탐이 많다 (예: "약" 은 "약산성" 에 걸린다). 두 글자 이상 구절로 적는다.
+#
+# 근거: 화장품법 제13조(의약품 오인 표시 금지), 표시광고법 제3조(부당 광고), 상표법.
+# 담당: 강근우 (콘텐츠 아키텍트 R-003)
+
+version: common-culture-2026.10
+
+banned:
+  - { term: 치료, reason: 의약품 오인 표현 }
+  - { term: 완치, reason: 의약품 오인 표현 }
+  - { term: 약효, reason: 의약품 오인 표현 }
+  - { term: 처방, reason: 의약품 오인 표현 }
+  - { term: 염증 완화, reason: 의약품 오인 표현 }
+  - { term: 아토피 개선, reason: 의약품 오인 표현 }
+  - { term: 탈모 방지, reason: 기능성 인증 없이 표시 불가 }
+  - { term: 부작용 없, reason: 효능 단정 표현 }
+  - { term: FDA 승인, reason: 확인되지 않은 인증 표시 }
+  - { term: 식약처 인증, reason: 확인되지 않은 인증 표시 }
+  - { term: 짝퉁, reason: 위조품 연상 }
+  - { term: 레플리카, reason: 위조품 연상 }
+  - { term: 미러급, reason: 위조품 연상 }
+  - { term: replica, reason: 위조품 연상 }
+
+trademark:
+  - { term: 샤넬, reason: 타사 상표 }
+  - { term: Chanel, reason: 타사 상표 }
+  - { term: 디올, reason: 타사 상표 }
+  - { term: Dior, reason: 타사 상표 }
+  - { term: 구찌, reason: 타사 상표 }
+  - { term: Gucci, reason: 타사 상표 }
+  - { term: 루이비통, reason: 타사 상표 }
+  - { term: Louis Vuitton, reason: 타사 상표 }
+  - { term: 에르메스, reason: 타사 상표 }
+  - { term: 나이키, reason: 타사 상표 }
+  - { term: Nike, reason: 타사 상표 }
+  - { term: 아디다스, reason: 타사 상표 }
+  - { term: Adidas, reason: 타사 상표 }
+  - { term: 디즈니, reason: 타사 캐릭터 }
+  - { term: Disney, reason: 타사 캐릭터 }
+  - { term: 산리오, reason: 타사 캐릭터 }
+  - { term: Sanrio, reason: 타사 캐릭터 }
+  - { term: 헬로키티, reason: 타사 캐릭터 }
+  - { term: Hello Kitty, reason: 타사 캐릭터 }
+  - { term: 포켓몬, reason: 타사 캐릭터 }
+  - { term: Pokemon, reason: 타사 캐릭터 }
+  - { term: 카카오프렌즈, reason: 타사 캐릭터 }
+  - { term: 라인프렌즈, reason: 타사 캐릭터 }
+  - { term: 짱구, reason: 타사 캐릭터 }
+
+exaggeration:
+  - { term: 세계 최초, reason: 입증 어려운 최상급 표현 }
+  - { term: 업계 1위, reason: 입증 어려운 최상급 표현 }
+  - { term: 판매 1위, reason: 입증 어려운 최상급 표현 }
+  - { term: 효과 100%, reason: 효능 단정 표현 }
+  - { term: 만족도 100%, reason: 입증 어려운 수치 }
+  - { term: 무조건, reason: 단정 표현 }
+  - { term: 반드시 효과, reason: 효능 단정 표현 }
+  - { term: 기적의, reason: 과장 표현, replace: "" }
+  - { term: 역대급, reason: 과장 표현, replace: 특별한 }
+  - { term: 최고급, reason: 과장 표현, replace: 고급 }
+  - { term: 최고의, reason: 과장 표현, replace: 만족스러운 }
+  - { term: 최상의, reason: 과장 표현, replace: 우수한 }
+  - { term: 완벽한, reason: 과장 표현, replace: 꼼꼼한 }
+  - { term: 유일한, reason: 입증 어려운 표현 }

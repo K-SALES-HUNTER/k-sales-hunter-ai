@@ -1,0 +1,34 @@
+# 싱가포르 문화·표현 필터 (현지어 en + 국가 특수 금기)
+# common.yaml 과 합쳐서 쓴다. 형식은 common.yaml 참조.
+#
+# 근거: Singapore Code of Advertising Practice (ASAS), HSA 화장품 광고 지침,
+#       MUIS 할랄 인증 (미인증 할랄 표시는 Administration of Muslim Law Act 위반).
+# 담당: 강근우
+
+version: sg-culture-2026.10
+locale: en
+
+banned:
+  - { term: cure, reason: 의약품 오인 표현 }
+  - { term: heals, reason: 의약품 오인 표현 }
+  - { term: medical grade, reason: 확인되지 않은 의료 등급 표시 }
+  - { term: first copy, reason: 위조품 연상 }
+  - { term: fake, reason: 위조품 연상 }
+  # 인증 없이 할랄 표시 금지
+  - { term: 할랄, reason: MUIS 인증 없는 할랄 표시 금지 }
+  - { term: halal, reason: MUIS 인증 없는 할랄 표시 금지 }
+
+trademark: []
+
+exaggeration:
+  - { term: best ever, reason: 최상급 표현 }
+  - { term: No.1, reason: 최상급 표현 }
+  - { term: guaranteed results, reason: 효능 단정 표현 }
+  - { term: 100% effective, reason: 효능 단정 표현 }
+  - { term: miracle, reason: 과장 표현 }
+
+guidelines:
+  - 영어는 영국식 철자를 쓴다 (colour, favourite).
+  - 가격은 S$ 와 소수 둘째 자리까지 쓴다. 예) S$12.90
+  - 인종·종교를 언급하는 마케팅 문구를 쓰지 않는다.
+  - 할랄 여부는 인증서가 없으면 언급하지 않는다.

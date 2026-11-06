@@ -50,3 +50,65 @@ def analysis_input(product: ProductSnapshot) -> dict:
         "preferences": AnalysisPreferences().model_dump(),
         "country_results": [],
     }
+
+
+@pytest.fixture
+def memory_store(monkeypatch: pytest.MonkeyPatch) -> dict:
+    """ai.jobs 대신 메모리에 잡을 저장한다. Postgres 없이 runner·dev_bff 전 구간을 돌린다.
+
+    store 모듈의 함수만 바꿔 끼우므로 runner·runtime·dev_bff 코드는 그대로 탄다.
+    """
+    from types import SimpleNamespace
+
+    from app.contracts.v1 import JobStatus
+    from app.core.jobs import store
+    from app.errors import JobNotFound
+
+    rows: dict[str, SimpleNamespace] = {}
+
+    async def create(*, job_id, job_type, request, trace_id="", countries=None):  # noqa: ANN001, ANN202
+        rows[job_id] = SimpleNamespace(
+            job_id=job_id,
+            job_type=job_type.value,
+            status=JobStatus.QUEUED.value,
+            step=None,
+            progress=0.0,
+            country_states={
+                code: {"status": "RUNNING", "step": None, "progress": 0.0}
+                for code in (countries or [])
+            },
+            request=request,
+            result=None,
+            error_code=None,
+            error_detail=None,
+            created_at=None,
+            finished_at=None,
+        )
+
+    async def patch(job_id, **fields):  # noqa: ANN001, ANN003, ANN202
+        row = rows[job_id]
+        for key, value in fields.items():
+            setattr(row, key, value)
+
+    async def get(job_id):  # noqa: ANN001, ANN202
+        if job_id not in rows:
+            raise JobNotFound(job_id)
+        return store._to_state(rows[job_id])
+
+    async def request_cancel(job_id):  # noqa: ANN001, ANN202
+        row = rows[job_id]
+        if JobStatus(row.status).is_terminal:
+            return False
+        row.status = JobStatus.CANCEL_REQUESTED.value
+        return True
+
+    async def is_cancel_requested(job_id):  # noqa: ANN001, ANN202
+        return rows[job_id].status == JobStatus.CANCEL_REQUESTED.value
+
+    monkeypatch.setattr(store, "create", create)
+    monkeypatch.setattr(store, "patch", patch)
+    monkeypatch.setattr(store, "get", get)
+    monkeypatch.setattr(store, "request_cancel", request_cancel)
+    monkeypatch.setattr(store, "is_cancel_requested", is_cancel_requested)
+    #: mark_running / finish 는 patch 를 부르므로 그대로 둔다
+    return rows

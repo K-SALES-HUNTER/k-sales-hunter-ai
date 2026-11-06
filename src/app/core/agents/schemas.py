@@ -102,14 +102,53 @@ class SalesSuggestionDraft(BaseModel):
 # ── content_graph (담당: 강근우) ────────────────────────────────────────
 
 
-class DetailContent(BaseModel):
-    title: str = Field(max_length=120, description="Shopee 제목 규칙: 120자 이내")
-    usps: list[str] = Field(min_length=3, max_length=6)
-    sections: list[str] = Field(
-        min_length=4, max_length=4, description="소개·특징·혜택·구매유도 순서"
+# 길이·개수 제약은 스키마에 넣지 않고 core/content/quality.py 가 검사한다.
+# strict json_schema 가 maxLength 류를 거부하고, 넣으면 검증 실패 재시도로 비용만 는다.
+# breadcrumb 는 카테고리 경로에서 코드가 만든다 (LLM 이 지어내지 않게).
+
+
+class SpecRow(BaseModel):
+    label: str
+    value: str
+
+
+class PdpCopyKo(BaseModel):
+    """상세페이지 한국어 초안 (draft_ko)."""
+
+    name: str = Field(description="Shopee 상품명. 핵심 키워드를 앞에, 120자 이내")
+    usps: list[str] = Field(description="핵심 특징 4개. 각 25자 이내 명사형")
+    intro: str = Field(description="1단락 소개. 무엇인지·누구를 위한 것인지")
+    features: str = Field(description="2단락 특징. 소재·구성·사이즈 등 사실")
+    benefits: str = Field(description="3단락 혜택. 사용 장면·선물 용도")
+    call_to_action: str = Field(description="4단락 구매 유도. 옵션 선택·배송 안내")
+    extra_specs: list[SpecRow] = Field(
+        description="주어진 사양 표에 없는 항목만 최대 3개. 상품 정보로 확인되는 사실만"
     )
-    specs: list[list[str]]
-    breadcrumb: list[str]
+
+
+class OptionLocal(BaseModel):
+    label: str
+    values: list[str]
+
+
+class PdpCopyLocal(BaseModel):
+    """현지어본 (localize). 한국어본과 같은 구조를 유지한다 (검수 대조용)."""
+
+    name: str
+    usps: list[str]
+    intro: str
+    features: str
+    benefits: str
+    call_to_action: str
+    specs: list[SpecRow] = Field(description="한국어 사양 표와 같은 순서·같은 행 수")
+    options: list[OptionLocal] = Field(description="한국어 옵션과 같은 순서")
+
+
+class TranslatedText(BaseModel):
+    """셀러가 고친 한국어 상품명·설명의 재번역 (PATCH content retranslate)."""
+
+    name: str
+    description: str
 
 
 # ── copilot (담당: 이동건) ──────────────────────────────────────────────

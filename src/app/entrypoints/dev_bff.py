@@ -26,11 +26,16 @@ from pydantic import BaseModel, Field
 
 from app.config import get_settings
 from app.contracts.v1 import (
+    COUNTRY_CURRENCY,
+    COUNTRY_LOCALE,
     COUNTRY_NAMES,
     SUPPORTED_COUNTRIES,
     AnalysisCommand,
+    AnalysisDigest,
     AnalysisPreferences,
     AnalysisResult,
+    ContentCommand,
+    ContentResult,
     CopilotRequest,
     CopilotResponse,
     CountryResult,
@@ -44,13 +49,21 @@ from app.contracts.v1 import (
     ProductSnapshot,
     QuoteRequest,
     QuoteResponse,
+    SalesInfoSnapshot,
     SalesSuggestRequest,
     SalesSuggestResponse,
+    ShippingMethod,
 )
 from app.core.catalog import shopee_categories
 from app.core.jobs import runner, store
 from app.core.pricing import fee_schedule
-from app.core.services import copilot, pricing_quote, product_fill, sales_suggest
+from app.core.services import (
+    content_edit,
+    copilot,
+    pricing_quote,
+    product_fill,
+    sales_suggest,
+)
 from app.observability.logging import get_logger
 
 log = get_logger(mod="dev_bff")
@@ -64,6 +77,10 @@ _jobs_by_product: dict[int, str] = {}
 _sales_suggestions: dict[tuple[int, str], SalesSuggestResponse] = {}
 #: (productId, 국가) -> 셀러가 확정한 판매 정보
 _sales_infos: dict[tuple[int, str], dict] = {}
+#: (productId, 국가) -> 상세페이지 생성 잡
+_detail_jobs: dict[tuple[int, str], str] = {}
+#: (productId, 국가) -> 완성된 상세페이지 (AI 결과 + 셀러 수정 + 이미지)
+_detail_pages: dict[tuple[int, str], dict] = {}
 _product_seq = itertools.count(1)
 _job_seq = itertools.count(1)
 
@@ -168,6 +185,13 @@ class SalesInfoBody(BaseModel):
     option2: OptionBody | None = None
     stock: list[StockRowBody] = []
     packaging: dict | None = None
+
+
+class DetailContentBody(BaseModel):
+    name: str
+    description: str
+    #: true 면 현지어본도 다시 옮긴다
+    retranslate: bool = True
 
 
 class SuggestBody(BaseModel):
@@ -400,6 +424,88 @@ async def save_sales_info(product_id: int, country_code: str, body: SalesInfoBod
     return {"saved": saved, "hasSalesInfo": True}
 
 
+# ── 상세 페이지 ─────────────────────────────────────────────────────────
+
+
+@router.post("/products/{product_id}/countries/{country_code}/detail-page", status_code=202)
+async def create_detail_page(product_id: int, country_code: str) -> dict:
+    """판매 정보가 확정돼야 만들 수 있다. 다시 누르면 새로 만든다 (셀러 수정본은 버린다)."""
+    product = _require_product(product_id)
+    code = country_code.upper()
+    saved = _sales_infos.get((product_id, code))
+    if saved is None:
+        raise HTTPException(status_code=409, detail="판매 정보를 먼저 저장하세요")
+
+    result = await _ensure_result(product_id)
+    entry = _find_country(_parse(result), code) if result else None
+    if entry is None:
+        raise HTTPException(status_code=404, detail="해당 국가 분석 결과가 없습니다")
+
+    job_id = f"c_{product_id}_{code}_{next(_job_seq)}"
+    await runner.submit_content(_content_command(job_id, product, entry, saved))
+    _detail_jobs[(product_id, code)] = job_id
+    _detail_pages.pop((product_id, code), None)
+    return {"jobId": job_id}
+
+
+@router.get("/products/{product_id}/countries/{country_code}/detail-page")
+async def detail_page(product_id: int, country_code: str):  # noqa: ANN201
+    from fastapi.responses import JSONResponse
+
+    product = _require_product(product_id)
+    code = country_code.upper()
+    page = await _ensure_detail(product_id, code)
+    if page is not None:
+        return _to_detail_page(product, code, page)
+
+    job_id = _detail_jobs.get((product_id, code))
+    if job_id is None:
+        raise HTTPException(status_code=404, detail="상세 페이지가 없습니다")
+    state = await store.get(job_id)
+    if state.status in (JobStatus.FAILED, JobStatus.CANCELLED):
+        return {
+            "status": "FAILED",
+            "jobId": job_id,
+            "errorCode": state.error.code.value if state.error else None,
+        }
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "GENERATING",
+            "jobId": job_id,
+            "step": state.step.value if state.step else None,
+            "progress": state.progress,
+        },
+    )
+
+
+@router.patch("/products/{product_id}/countries/{country_code}/detail-page/content")
+async def update_detail_content(
+    product_id: int, country_code: str, body: DetailContentBody
+) -> dict:
+    """셀러가 고친 한국어 상품명·설명. 사람이 고친 값은 이후 AI 가 덮어쓰지 않는다."""
+    product = _require_product(product_id)
+    code = country_code.upper()
+    page = await _ensure_detail(product_id, code)
+    if page is None:
+        raise HTTPException(status_code=404, detail="상세 페이지가 없습니다")
+
+    ko, local = page["ko"], page["local"]
+    if body.retranslate and local is not None:
+        translated = await content_edit.retranslate(
+            country=code,
+            locale=page["locale"],
+            name=body.name,
+            description=body.description,
+            previous_name=local["name"],
+            previous_description=local["description"],
+        )
+        local.update(name=translated.name, description=translated.description)
+    ko.update(name=body.name, description=body.description)
+    page["edited"] = True
+    return _to_detail_page(product, code, page)
+
+
 # ── 코파일럿 ────────────────────────────────────────────────────────────
 
 
@@ -492,7 +598,7 @@ def _to_product_card(product: dict) -> dict:
     if product.get("result"):
         for item in _visible_countries(_parse(product["result"])):
             has_sales_info = (product["id"], item.country) in _sales_infos
-            has_detail = False
+            has_detail = (product["id"], item.country) in _detail_pages
             countries.append(
                 {
                     "code": item.country,
@@ -780,6 +886,179 @@ def _to_sales_info(
         **_suggestion_fields(suggestion),
         "stockRows": [],
         "saved": saved,
+    }
+
+
+#: 상세페이지 플랫폼 문구. Spring 이 판매정보로 채우는 부분이다 (AI 산출 아님).
+PDP_TEXT = {
+    "ko": {
+        "region": "{country} 전 지역 배송",
+        "fee": "무료배송 · {method}",
+        "eta": "{min} ~ {max}일 이내",
+        "stock": "재고 {count}개 남음",
+    },
+    "vi": {
+        "region": "Giao hàng toàn quốc Việt Nam",
+        "fee": "Miễn phí vận chuyển · {method}",
+        "eta": "Trong {min} ~ {max} ngày",
+        "stock": "Còn {count} sản phẩm",
+    },
+    "en": {
+        "region": "Island-wide delivery in Singapore",
+        "fee": "Free shipping · {method}",
+        "eta": "{min} ~ {max} days",
+        "stock": "{count} left in stock",
+    },
+    "th": {
+        "region": "จัดส่งทั่วประเทศไทย",
+        "fee": "ส่งฟรี · {method}",
+        "eta": "ภายใน {min} ~ {max} วัน",
+        "stock": "เหลือ {count} ชิ้น",
+    },
+}
+
+
+def _content_command(
+    job_id: str, product: dict, entry: CountryResult, saved: dict
+) -> ContentCommand:
+    """확정 판매정보 + 분석 요약 -> 상세페이지 잡 입력."""
+    code = entry.country
+    category = shopee_categories.load(code).get(saved.get("category"))
+    fx = entry.pricing.fx.krw_per_local if entry.pricing and entry.pricing.fx else 0.0
+    final_price = int(saved.get("finalPrice") or 0)
+    method = (saved.get("shippingMethod") or "").upper()
+    use_options = saved.get("useOptions", True)
+
+    return ContentCommand(
+        job_id=job_id,
+        trace_id=uuid.uuid4().hex,
+        country=code,
+        locale=COUNTRY_LOCALE.get(code, "en"),
+        product=_snapshot(product),
+        sales_info=SalesInfoSnapshot(
+            category_id=saved.get("category", ""),
+            category_label=category.label if category else "",
+            attributes=saved.get("attrs") or {},
+            option1=saved.get("option1") if use_options else None,
+            option2=saved.get("option2") if use_options else None,
+            final_price_krw=final_price,
+            final_price_local=round(final_price / fx, 2) if fx else 0.0,
+            currency=COUNTRY_CURRENCY.get(code, ""),
+            shipping_method=(
+                ShippingMethod(method) if method in ShippingMethod.__members__ else None
+            ),
+            stock_total=sum(int(row.get("qty") or 0) for row in saved.get("stock") or []),
+        ),
+        analysis=AnalysisDigest(
+            positioning=entry.insight.positioning.value if entry.insight else "",
+            positioning_label=entry.insight.positioning_label if entry.insight else "",
+            risk_flags=[item.text for item in (entry.risk.warnings if entry.risk else [])],
+        ),
+        market_profile=MarketProfile(),
+    )
+
+
+async def _ensure_detail(product_id: int, code: str) -> dict | None:
+    """잡이 끝났으면 결과를 상세페이지 상태로 옮겨 둔다. 이후 수정은 여기에 쌓인다."""
+    key = (product_id, code)
+    if key in _detail_pages:
+        return _detail_pages[key]
+    job_id = _detail_jobs.get(key)
+    if job_id is None:
+        return None
+    state = await store.get(job_id)
+    if state.status is not JobStatus.COMPLETED or not state.result:
+        return None
+
+    result = ContentResult.model_validate(state.result)
+    product = _products[product_id]
+    _detail_pages[key] = {
+        "status": result.status.value,
+        "qualityScore": result.quality_score,
+        "qualityIssues": [issue.model_dump(by_alias=True) for issue in result.quality_issues],
+        "locale": result.locale,
+        "ko": result.ko.model_dump(by_alias=True) if result.ko else None,
+        "local": result.local.model_dump(by_alias=True) if result.local else None,
+        "edited": False,
+        "productImages": [
+            {"id": f"pi_{index}", "label": f"기본 {index}", "src": url}
+            for index, url in enumerate(product["images"], start=1)
+        ],
+        "detailImages": [],
+        "mainImageId": "pi_1" if product["images"] else None,
+    }
+    return _detail_pages[key]
+
+
+def _pdp(draft: dict, *, lang: str, code: str, saved: dict, entry: CountryResult | None) -> dict:
+    """AI 초안 + 판매정보 -> 프론트 PdpContent."""
+    text = PDP_TEXT.get(lang, PDP_TEXT["en"])
+    method = (saved.get("shippingMethod") or "sls").upper()
+    option = next(
+        (
+            item
+            for item in (entry.logistics.options if entry and entry.logistics else [])
+            if item.method.value == method
+        ),
+        None,
+    )
+    fx = entry.pricing.fx.krw_per_local if entry and entry.pricing and entry.pricing.fx else 0.0
+    price_local = (saved.get("finalPrice") or 0) / fx if fx else 0.0
+    price = local_price_text(code, price_local)
+    if lang == "vi":
+        #: 베트남 표기는 천 단위 마침표
+        price = price.replace(",", ".")
+    stock = sum(int(row.get("qty") or 0) for row in saved.get("stock") or [])
+
+    return {
+        "breadcrumb": draft["breadcrumb"],
+        "name": draft["name"],
+        "price": price,
+        "usps": draft["usps"],
+        "shipping": {
+            "region": text["region"].format(country=COUNTRY_NAMES.get(code, code)),
+            "fee": text["fee"].format(method=METHOD_NAME.get(method, method)),
+            "eta": text["eta"].format(
+                min=option.eta_min_days if option else "-",
+                max=option.eta_max_days if option else "-",
+            ),
+        },
+        "options": draft.get("options") or [],
+        "stockNote": text["stock"].format(count=stock),
+        "specs": draft["specs"],
+        "description": draft["description"],
+    }
+
+
+def _to_detail_page(product: dict, code: str, page: dict) -> dict:
+    saved = _sales_infos.get((product["id"], code)) or {}
+    result = product.get("result")
+    entry = _find_country(_parse(result), code) if result else None
+    content = {
+        "ko": _pdp(page["ko"], lang="ko", code=code, saved=saved, entry=entry),
+        "local": (
+            _pdp(page["local"], lang=page["locale"], code=code, saved=saved, entry=entry)
+            if page["local"]
+            else None
+        ),
+    }
+    return {
+        "status": page["status"],
+        "qualityScore": page["qualityScore"],
+        "qualityIssues": page["qualityIssues"],
+        "edited": page["edited"],
+        "content": content,
+        "seller": {
+            "name": "내 마켓",
+            "meta": "온라인 · 5분 이내 응답",
+            "rating": "—",
+            "response": "—",
+            "followers": "—",
+        },
+        "productImages": page["productImages"],
+        "mainImageId": page["mainImageId"],
+        "detailImages": page["detailImages"],
+        "locale": page["locale"],
     }
 
 

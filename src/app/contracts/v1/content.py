@@ -62,6 +62,8 @@ class PdpDraft(CamelModel):
     #: 상품 사양 표. [["브랜드", "Kora"], ...]
     specs: list[list[str]] = Field(default_factory=list)
     breadcrumb: list[str] = Field(default_factory=list)
+    #: 옵션 표기 [{label, values}]. 현지어본은 옵션값까지 번역돼 있다.
+    options: list[dict] = Field(default_factory=list)
 
 
 class QualityIssue(CamelModel):
@@ -83,3 +85,5 @@ class ContentResult(CamelModel):
     quality_score: int = 0
     quality_issues: list[QualityIssue] = Field(default_factory=list)
     regeneration_count: int = 0
+    #: 적용한 문화 필터 사전 버전 (data/culture)
+    rules_version: str = ""

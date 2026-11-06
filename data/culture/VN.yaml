@@ -1,0 +1,36 @@
+# 베트남 문화·표현 필터 (현지어 vi + 국가 특수 금기)
+# common.yaml 과 합쳐서 쓴다. 형식은 common.yaml 참조.
+#
+# 근거: Nghị định 38/2021/NĐ-CP (광고 위반 행정처분), Luật Quảng cáo 2012 제8조(금지 광고),
+#       Nghị định 93/2016/NĐ-CP (화장품 광고는 치료 효능 표시 금지).
+# 담당: 강근우
+
+version: vn-culture-2026.10
+locale: vi
+
+banned:
+  - { term: chữa bệnh, reason: 의약품 오인 표현 }
+  - { term: điều trị, reason: 의약품 오인 표현 }
+  - { term: đặc trị, reason: 의약품 오인 표현 }
+  - { term: hàng fake, reason: 위조품 연상 }
+  - { term: hàng nhái, reason: 위조품 연상 }
+  - { term: rep 1:1, reason: 위조품 연상 }
+  # 영토 분쟁 해역 명칭. 베트남에서는 Biển Đông 으로만 부른다.
+  - { term: 남중국해, reason: 영토 분쟁 표현 (베트남 민감) }
+  - { term: South China Sea, reason: 영토 분쟁 표현 (베트남 민감) }
+  - { term: Biển Hoa Nam, reason: 영토 분쟁 표현 (베트남 민감) }
+
+trademark: []
+
+exaggeration:
+  - { term: tốt nhất, reason: 최상급 표현 }
+  - { term: số 1, reason: 최상급 표현 }
+  - { term: hiệu quả 100%, reason: 효능 단정 표현 }
+  - { term: thần kỳ, reason: 과장 표현 }
+
+# 초안·현지화 프롬프트에 그대로 들어가는 작성 지침
+guidelines:
+  - 베트남어는 성조 부호를 빠뜨리지 않는다. 고객 호칭은 "bạn" 을 쓴다.
+  - 가격·수량의 천 단위 구분은 마침표를 쓴다. 예) ₫535.000
+  - 해역 명칭이 필요하면 Biển Đông 만 쓴다.
+  - 선물·수집 용도를 강조하면 반응이 좋다. 생일·Tết(설) 선물 맥락을 자연스럽게 넣어도 된다.
