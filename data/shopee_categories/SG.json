@@ -1,0 +1,2647 @@
+{
+  "country": "SG",
+  "locale": "en",
+  "version": "sg-shopee-categories-2026.10-snapshot",
+  "source": "Shopee 셀러센터 카테고리 트리 수동 정리 (FE 11종 카테고리에 대응하는 leaf만)",
+  "note": "shopeeId 는 셀러센터에서 실제 id 를 확인한 뒤 채운다. 그 전까지 id(slug)가 키다.",
+  "homeLabel": "Home",
+  "attributeDefs": {
+    "brand": {
+      "label": "브랜드",
+      "labelLocal": "Brand"
+    },
+    "model": {
+      "label": "모델명",
+      "labelLocal": "Model"
+    },
+    "material": {
+      "label": "소재",
+      "labelLocal": "Material"
+    },
+    "size": {
+      "label": "사이즈",
+      "labelLocal": "Size"
+    },
+    "color": {
+      "label": "색상",
+      "labelLocal": "Color"
+    },
+    "origin": {
+      "label": "제조국",
+      "labelLocal": "Country of Origin"
+    },
+    "age": {
+      "label": "권장 연령",
+      "labelLocal": "Recommended Age"
+    },
+    "character": {
+      "label": "캐릭터",
+      "labelLocal": "Character"
+    },
+    "license": {
+      "label": "정품 라이선스",
+      "labelLocal": "Official License"
+    },
+    "volume": {
+      "label": "용량",
+      "labelLocal": "Volume"
+    },
+    "skin_type": {
+      "label": "피부 타입",
+      "labelLocal": "Skin Type"
+    },
+    "ingredients": {
+      "label": "주요 성분",
+      "labelLocal": "Key Ingredients"
+    },
+    "expiry": {
+      "label": "유통·사용기한",
+      "labelLocal": "Shelf Life"
+    },
+    "warranty": {
+      "label": "보증 기간",
+      "labelLocal": "Warranty Period"
+    },
+    "compatible": {
+      "label": "호환 기종",
+      "labelLocal": "Compatible Model"
+    },
+    "pet_type": {
+      "label": "반려동물 종류",
+      "labelLocal": "Pet Type"
+    },
+    "net_weight": {
+      "label": "중량",
+      "labelLocal": "Net Weight"
+    },
+    "quantity": {
+      "label": "구성 수량",
+      "labelLocal": "Quantity per Pack"
+    },
+    "style": {
+      "label": "스타일",
+      "labelLocal": "Style"
+    },
+    "storage": {
+      "label": "보관 방법",
+      "labelLocal": "Storage"
+    },
+    "certification": {
+      "label": "인증",
+      "labelLocal": "Certification"
+    },
+    "gender": {
+      "label": "성별",
+      "labelLocal": "Gender"
+    }
+  },
+  "categories": [
+    {
+      "id": "beauty-cleanser",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "스킨케어",
+        "클렌저"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Skincare",
+        "Facial Cleansers"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "클렌저",
+        "클렌징",
+        "폼",
+        "세안",
+        "cleanser",
+        "cleansing",
+        "foam"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-toner",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "스킨케어",
+        "토너·스킨"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Skincare",
+        "Toners"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "토너",
+        "스킨",
+        "패드",
+        "toner",
+        "pad"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-serum",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "스킨케어",
+        "세럼·앰플"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Skincare",
+        "Serums & Essences"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "세럼",
+        "앰플",
+        "에센스",
+        "serum",
+        "ampoule",
+        "essence"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-cream",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "스킨케어",
+        "크림·로션"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Skincare",
+        "Moisturizers"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "크림",
+        "로션",
+        "보습",
+        "수분",
+        "cream",
+        "lotion",
+        "moisturizer"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-sunscreen",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "스킨케어",
+        "선케어"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Skincare",
+        "Sunscreen"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "선크림",
+        "선케어",
+        "자외선",
+        "spf",
+        "sun",
+        "sunscreen"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-mask",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "스킨케어",
+        "마스크팩"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Skincare",
+        "Face Masks"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "마스크팩",
+        "시트",
+        "팩",
+        "mask",
+        "sheet"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "quantity",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        },
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-lip",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "메이크업",
+        "립"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Makeup",
+        "Lips"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "립스틱",
+        "틴트",
+        "립밤",
+        "립글로스",
+        "lip",
+        "tint"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        },
+        {
+          "key": "certification",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-base",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "메이크업",
+        "베이스·쿠션"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Makeup",
+        "Base Makeup"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "쿠션",
+        "파운데이션",
+        "비비",
+        "프라이머",
+        "cushion",
+        "foundation"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": false
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-hair",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "헤어케어",
+        "샴푸·트리트먼트"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Hair Care",
+        "Shampoo & Conditioner"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "샴푸",
+        "트리트먼트",
+        "헤어",
+        "린스",
+        "shampoo",
+        "hair"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "beauty-body",
+      "shopeeId": null,
+      "path": [
+        "뷰티",
+        "바디케어",
+        "바디워시·로션"
+      ],
+      "pathLocal": [
+        "Beauty & Personal Care",
+        "Bath & Body",
+        "Body Wash & Lotion"
+      ],
+      "appCategories": [
+        "뷰티"
+      ],
+      "keywords": [
+        "바디워시",
+        "바디로션",
+        "핸드크림",
+        "바디",
+        "body",
+        "hand cream"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "skin_type",
+          "required": false
+        },
+        {
+          "key": "ingredients",
+          "required": false
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "fashion-women-top",
+      "shopeeId": null,
+      "path": [
+        "여성의류",
+        "상의",
+        "티셔츠·블라우스"
+      ],
+      "pathLocal": [
+        "Women's Apparel",
+        "Tops",
+        "T-shirts & Blouses"
+      ],
+      "appCategories": [
+        "패션"
+      ],
+      "keywords": [
+        "티셔츠",
+        "블라우스",
+        "니트",
+        "셔츠",
+        "상의",
+        "맨투맨",
+        "t-shirt",
+        "blouse"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "style",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "fashion-women-dress",
+      "shopeeId": null,
+      "path": [
+        "여성의류",
+        "원피스",
+        "캐주얼 원피스"
+      ],
+      "pathLocal": [
+        "Women's Apparel",
+        "Dresses",
+        "Casual Dresses"
+      ],
+      "appCategories": [
+        "패션"
+      ],
+      "keywords": [
+        "원피스",
+        "드레스",
+        "dress"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "style",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "fashion-men-top",
+      "shopeeId": null,
+      "path": [
+        "남성의류",
+        "상의",
+        "티셔츠"
+      ],
+      "pathLocal": [
+        "Men's Apparel",
+        "Tops",
+        "T-shirts"
+      ],
+      "appCategories": [
+        "패션"
+      ],
+      "keywords": [
+        "남성",
+        "남자",
+        "티셔츠",
+        "후드",
+        "men"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "style",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "fashion-socks",
+      "shopeeId": null,
+      "path": [
+        "여성의류",
+        "이너웨어",
+        "양말·스타킹"
+      ],
+      "pathLocal": [
+        "Women's Apparel",
+        "Lingerie & Sleepwear",
+        "Socks & Stockings"
+      ],
+      "appCategories": [
+        "패션"
+      ],
+      "keywords": [
+        "양말",
+        "스타킹",
+        "삭스",
+        "socks"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "acc-earring",
+      "shopeeId": null,
+      "path": [
+        "패션 액세서리",
+        "주얼리",
+        "귀걸이"
+      ],
+      "pathLocal": [
+        "Fashion Accessories",
+        "Jewelry",
+        "Earrings"
+      ],
+      "appCategories": [
+        "액세서리"
+      ],
+      "keywords": [
+        "귀걸이",
+        "이어링",
+        "이어커프",
+        "earring"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "style",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        },
+        {
+          "key": "gender",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        }
+      ]
+    },
+    {
+      "id": "acc-necklace",
+      "shopeeId": null,
+      "path": [
+        "패션 액세서리",
+        "주얼리",
+        "목걸이"
+      ],
+      "pathLocal": [
+        "Fashion Accessories",
+        "Jewelry",
+        "Necklaces"
+      ],
+      "appCategories": [
+        "액세서리"
+      ],
+      "keywords": [
+        "목걸이",
+        "펜던트",
+        "necklace"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        },
+        {
+          "key": "gender",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "acc-hair",
+      "shopeeId": null,
+      "path": [
+        "패션 액세서리",
+        "헤어 액세서리",
+        "헤어핀·집게핀"
+      ],
+      "pathLocal": [
+        "Fashion Accessories",
+        "Hair Accessories",
+        "Hair Clips"
+      ],
+      "appCategories": [
+        "액세서리"
+      ],
+      "keywords": [
+        "머리핀",
+        "헤어핀",
+        "집게핀",
+        "곱창",
+        "헤어밴드",
+        "hair clip",
+        "scrunchie"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "acc-bag",
+      "shopeeId": null,
+      "path": [
+        "가방",
+        "숄더·크로스백",
+        "캔버스백"
+      ],
+      "pathLocal": [
+        "Women's Bags",
+        "Shoulder & Crossbody Bags",
+        "Canvas Bags"
+      ],
+      "appCategories": [
+        "패션",
+        "액세서리"
+      ],
+      "keywords": [
+        "가방",
+        "에코백",
+        "크로스백",
+        "파우치",
+        "bag",
+        "tote"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "living-storage",
+      "shopeeId": null,
+      "path": [
+        "생활·인테리어",
+        "수납·정리",
+        "정리함·파우치"
+      ],
+      "pathLocal": [
+        "Home & Living",
+        "Home Organizers",
+        "Storage Boxes & Pouches"
+      ],
+      "appCategories": [
+        "생활용품"
+      ],
+      "keywords": [
+        "수납",
+        "정리함",
+        "파우치",
+        "바구니",
+        "storage",
+        "organizer"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "living-bath",
+      "shopeeId": null,
+      "path": [
+        "생활·인테리어",
+        "욕실용품",
+        "수건·욕실 소품"
+      ],
+      "pathLocal": [
+        "Home & Living",
+        "Bathroom",
+        "Towels & Bath Accessories"
+      ],
+      "appCategories": [
+        "생활용품"
+      ],
+      "keywords": [
+        "수건",
+        "타월",
+        "칫솔",
+        "욕실",
+        "towel"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "living-deco",
+      "shopeeId": null,
+      "path": [
+        "생활·인테리어",
+        "인테리어 소품",
+        "디퓨저·캔들·무드등"
+      ],
+      "pathLocal": [
+        "Home & Living",
+        "Home Decor",
+        "Diffusers, Candles & Lights"
+      ],
+      "appCategories": [
+        "생활용품"
+      ],
+      "keywords": [
+        "디퓨저",
+        "캔들",
+        "향초",
+        "무드등",
+        "방향제",
+        "diffuser",
+        "candle"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": false
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        }
+      ]
+    },
+    {
+      "id": "kitchen-tumbler",
+      "shopeeId": null,
+      "path": [
+        "주방용품",
+        "물병·텀블러",
+        "텀블러"
+      ],
+      "pathLocal": [
+        "Kitchenware",
+        "Bottles & Tumblers",
+        "Tumblers"
+      ],
+      "appCategories": [
+        "주방용품"
+      ],
+      "keywords": [
+        "텀블러",
+        "보틀",
+        "물병",
+        "머그",
+        "tumbler",
+        "bottle"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "volume",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "용량",
+          "label": "제공 용량"
+        }
+      ]
+    },
+    {
+      "id": "kitchen-tableware",
+      "shopeeId": null,
+      "path": [
+        "주방용품",
+        "식기",
+        "그릇·접시·수저"
+      ],
+      "pathLocal": [
+        "Kitchenware",
+        "Tableware",
+        "Bowls, Plates & Cutlery"
+      ],
+      "appCategories": [
+        "주방용품"
+      ],
+      "keywords": [
+        "그릇",
+        "접시",
+        "수저",
+        "젓가락",
+        "컵",
+        "plate",
+        "bowl"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "kitchen-tools",
+      "shopeeId": null,
+      "path": [
+        "주방용품",
+        "조리도구",
+        "조리 소도구"
+      ],
+      "pathLocal": [
+        "Kitchenware",
+        "Cooking Tools",
+        "Kitchen Utensils"
+      ],
+      "appCategories": [
+        "주방용품"
+      ],
+      "keywords": [
+        "뒤집개",
+        "국자",
+        "도마",
+        "조리",
+        "utensil"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        },
+        {
+          "key": "warranty",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "stationery-notebook",
+      "shopeeId": null,
+      "path": [
+        "문구",
+        "노트·다이어리",
+        "다이어리·플래너"
+      ],
+      "pathLocal": [
+        "Stationery",
+        "Notebooks & Paper",
+        "Planners & Diaries"
+      ],
+      "appCategories": [
+        "문구·취미"
+      ],
+      "keywords": [
+        "노트",
+        "다이어리",
+        "플래너",
+        "수첩",
+        "notebook",
+        "planner"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        }
+      ]
+    },
+    {
+      "id": "stationery-pen",
+      "shopeeId": null,
+      "path": [
+        "문구",
+        "필기구",
+        "볼펜·형광펜"
+      ],
+      "pathLocal": [
+        "Stationery",
+        "Writing Tools",
+        "Pens & Highlighters"
+      ],
+      "appCategories": [
+        "문구·취미"
+      ],
+      "keywords": [
+        "볼펜",
+        "형광펜",
+        "펜",
+        "만년필",
+        "pen",
+        "highlighter"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "stationery-sticker",
+      "shopeeId": null,
+      "path": [
+        "문구",
+        "데코 문구",
+        "스티커·마스킹테이프"
+      ],
+      "pathLocal": [
+        "Stationery",
+        "Deco Stationery",
+        "Stickers & Washi Tape"
+      ],
+      "appCategories": [
+        "문구·취미",
+        "캐릭터·굿즈"
+      ],
+      "keywords": [
+        "스티커",
+        "씰",
+        "마스킹",
+        "다꾸",
+        "sticker",
+        "washi"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "character",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "toys-plush",
+      "shopeeId": null,
+      "path": [
+        "완구·취미",
+        "인형·플러시",
+        "캐릭터 인형"
+      ],
+      "pathLocal": [
+        "Toys, Games & Hobbies",
+        "Plush Toys",
+        "Character Plush"
+      ],
+      "appCategories": [
+        "캐릭터·굿즈",
+        "문구·취미"
+      ],
+      "keywords": [
+        "인형",
+        "봉제",
+        "플러시",
+        "말랑",
+        "애착",
+        "곰인형",
+        "plush",
+        "doll",
+        "stuffed"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "character",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": false
+        },
+        {
+          "key": "age",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "toys-collectible",
+      "shopeeId": null,
+      "path": [
+        "완구·취미",
+        "수집용 피규어",
+        "피규어·아크릴 스탠드"
+      ],
+      "pathLocal": [
+        "Toys, Games & Hobbies",
+        "Collectible Figures",
+        "Figures & Acrylic Stands"
+      ],
+      "appCategories": [
+        "캐릭터·굿즈",
+        "문구·취미"
+      ],
+      "keywords": [
+        "피규어",
+        "아크릴",
+        "스탠드",
+        "랜덤",
+        "figure",
+        "acrylic"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "character",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": false
+        },
+        {
+          "key": "age",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "toys-keyring",
+      "shopeeId": null,
+      "path": [
+        "완구·취미",
+        "키링·가방 장식",
+        "캐릭터 키링"
+      ],
+      "pathLocal": [
+        "Toys, Games & Hobbies",
+        "Keychains & Bag Charms",
+        "Character Keychains"
+      ],
+      "appCategories": [
+        "캐릭터·굿즈",
+        "액세서리"
+      ],
+      "keywords": [
+        "키링",
+        "키체인",
+        "참",
+        "가방고리",
+        "keyring",
+        "keychain",
+        "charm"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "character",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": false
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        }
+      ]
+    },
+    {
+      "id": "toys-kpop",
+      "shopeeId": null,
+      "path": [
+        "완구·취미",
+        "K-POP 굿즈",
+        "앨범·포토카드"
+      ],
+      "pathLocal": [
+        "Toys, Games & Hobbies",
+        "K-POP Merchandise",
+        "Albums & Photocards"
+      ],
+      "appCategories": [
+        "캐릭터·굿즈"
+      ],
+      "keywords": [
+        "앨범",
+        "포토카드",
+        "응원봉",
+        "아이돌",
+        "케이팝",
+        "kpop",
+        "k-pop",
+        "photocard",
+        "album"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "license",
+          "required": true
+        },
+        {
+          "key": "character",
+          "required": false
+        },
+        {
+          "key": "quantity",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "baby-toys",
+      "shopeeId": null,
+      "path": [
+        "유아·아동",
+        "유아 완구",
+        "아동용 완구"
+      ],
+      "pathLocal": [
+        "Mom & Baby",
+        "Baby & Toddler Toys",
+        "Kids Toys"
+      ],
+      "appCategories": [
+        "캐릭터·굿즈",
+        "생활용품"
+      ],
+      "keywords": [
+        "유아",
+        "아기",
+        "아동",
+        "장난감",
+        "baby",
+        "kids"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "age",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "certification",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        }
+      ]
+    },
+    {
+      "id": "digital-phonecase",
+      "shopeeId": null,
+      "path": [
+        "디지털 액세서리",
+        "휴대폰 액세서리",
+        "휴대폰 케이스"
+      ],
+      "pathLocal": [
+        "Mobile & Gadgets",
+        "Mobile Accessories",
+        "Phone Cases"
+      ],
+      "appCategories": [
+        "디지털 액세서리",
+        "캐릭터·굿즈"
+      ],
+      "keywords": [
+        "케이스",
+        "폰케이스",
+        "아이폰",
+        "갤럭시",
+        "범퍼",
+        "case",
+        "iphone",
+        "galaxy"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "compatible",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "호환 기종",
+          "label": "호환 기종"
+        },
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        }
+      ]
+    },
+    {
+      "id": "digital-cable",
+      "shopeeId": null,
+      "path": [
+        "디지털 액세서리",
+        "충전기·케이블",
+        "충전 케이블"
+      ],
+      "pathLocal": [
+        "Mobile & Gadgets",
+        "Cables & Chargers",
+        "Charging Cables"
+      ],
+      "appCategories": [
+        "디지털 액세서리"
+      ],
+      "keywords": [
+        "케이블",
+        "충전기",
+        "c타입",
+        "고속충전",
+        "cable",
+        "charger"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "model",
+          "required": false
+        },
+        {
+          "key": "compatible",
+          "required": true
+        },
+        {
+          "key": "warranty",
+          "required": true
+        },
+        {
+          "key": "certification",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        }
+      ]
+    },
+    {
+      "id": "digital-earphone-case",
+      "shopeeId": null,
+      "path": [
+        "디지털 액세서리",
+        "이어폰 액세서리",
+        "이어폰 케이스"
+      ],
+      "pathLocal": [
+        "Mobile & Gadgets",
+        "Earphone Accessories",
+        "Earphone Cases"
+      ],
+      "appCategories": [
+        "디지털 액세서리",
+        "캐릭터·굿즈"
+      ],
+      "keywords": [
+        "에어팟",
+        "버즈",
+        "이어폰",
+        "airpods",
+        "buds"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "compatible",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "color",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "호환 기종",
+          "label": "호환 기종"
+        },
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        }
+      ]
+    },
+    {
+      "id": "pet-toy",
+      "shopeeId": null,
+      "path": [
+        "반려동물",
+        "반려동물 용품",
+        "장난감"
+      ],
+      "pathLocal": [
+        "Pets",
+        "Pet Accessories",
+        "Pet Toys"
+      ],
+      "appCategories": [
+        "반려동물용품"
+      ],
+      "keywords": [
+        "강아지",
+        "고양이",
+        "장난감",
+        "노즈워크",
+        "pet",
+        "dog",
+        "cat"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "pet_type",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "pet-wear",
+      "shopeeId": null,
+      "path": [
+        "반려동물",
+        "반려동물 용품",
+        "의류·액세서리"
+      ],
+      "pathLocal": [
+        "Pets",
+        "Pet Accessories",
+        "Pet Clothing"
+      ],
+      "appCategories": [
+        "반려동물용품"
+      ],
+      "keywords": [
+        "강아지옷",
+        "하네스",
+        "목줄",
+        "리드줄",
+        "harness",
+        "leash"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "pet_type",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": true
+        },
+        {
+          "key": "size",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "색상",
+          "label": "제공 색상"
+        },
+        {
+          "name": "사이즈",
+          "label": "제공 사이즈"
+        }
+      ]
+    },
+    {
+      "id": "pet-snack",
+      "shopeeId": null,
+      "path": [
+        "반려동물",
+        "반려동물 사료·간식",
+        "간식"
+      ],
+      "pathLocal": [
+        "Pets",
+        "Pet Food",
+        "Pet Treats"
+      ],
+      "appCategories": [
+        "반려동물용품",
+        "식품"
+      ],
+      "keywords": [
+        "간식",
+        "사료",
+        "츄르",
+        "육포",
+        "treat"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "pet_type",
+          "required": true
+        },
+        {
+          "key": "net_weight",
+          "required": true
+        },
+        {
+          "key": "ingredients",
+          "required": true
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "맛",
+          "label": "맛 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "food-snack",
+      "shopeeId": null,
+      "path": [
+        "식품",
+        "과자·스낵",
+        "스낵·김"
+      ],
+      "pathLocal": [
+        "Food & Beverages",
+        "Snacks",
+        "Snacks & Seaweed"
+      ],
+      "appCategories": [
+        "식품"
+      ],
+      "keywords": [
+        "과자",
+        "스낵",
+        "김",
+        "젤리",
+        "초콜릿",
+        "snack",
+        "seaweed"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "net_weight",
+          "required": true
+        },
+        {
+          "key": "ingredients",
+          "required": true
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "storage",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "맛",
+          "label": "맛 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "food-ramen",
+      "shopeeId": null,
+      "path": [
+        "식품",
+        "즉석식품",
+        "라면·떡볶이"
+      ],
+      "pathLocal": [
+        "Food & Beverages",
+        "Instant Food",
+        "Ramen & Tteokbokki"
+      ],
+      "appCategories": [
+        "식품"
+      ],
+      "keywords": [
+        "라면",
+        "떡볶이",
+        "즉석",
+        "컵라면",
+        "ramen",
+        "noodle"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "net_weight",
+          "required": true
+        },
+        {
+          "key": "ingredients",
+          "required": true
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "storage",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "맛",
+          "label": "맛 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "food-tea",
+      "shopeeId": null,
+      "path": [
+        "식품",
+        "음료·차",
+        "차·분말 음료"
+      ],
+      "pathLocal": [
+        "Food & Beverages",
+        "Beverages",
+        "Tea & Powdered Drinks"
+      ],
+      "appCategories": [
+        "식품"
+      ],
+      "keywords": [
+        "차",
+        "유자",
+        "티백",
+        "커피",
+        "음료",
+        "tea",
+        "coffee"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "net_weight",
+          "required": true
+        },
+        {
+          "key": "ingredients",
+          "required": true
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "storage",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "맛",
+          "label": "맛 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    },
+    {
+      "id": "food-health",
+      "shopeeId": null,
+      "path": [
+        "식품",
+        "건강식품",
+        "홍삼·비타민"
+      ],
+      "pathLocal": [
+        "Food & Beverages",
+        "Health Supplements",
+        "Red Ginseng & Vitamins"
+      ],
+      "appCategories": [
+        "식품"
+      ],
+      "keywords": [
+        "홍삼",
+        "비타민",
+        "영양제",
+        "유산균",
+        "ginseng",
+        "vitamin"
+      ],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "net_weight",
+          "required": true
+        },
+        {
+          "key": "ingredients",
+          "required": true
+        },
+        {
+          "key": "expiry",
+          "required": true
+        },
+        {
+          "key": "certification",
+          "required": true
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        },
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        }
+      ]
+    },
+    {
+      "id": "other-general",
+      "shopeeId": null,
+      "path": [
+        "기타",
+        "기타 잡화",
+        "기타"
+      ],
+      "pathLocal": [
+        "Others",
+        "Miscellaneous",
+        "Others"
+      ],
+      "appCategories": [
+        "기타"
+      ],
+      "keywords": [],
+      "attributes": [
+        {
+          "key": "brand",
+          "required": true
+        },
+        {
+          "key": "material",
+          "required": false
+        },
+        {
+          "key": "size",
+          "required": false
+        },
+        {
+          "key": "origin",
+          "required": true
+        }
+      ],
+      "optionHints": [
+        {
+          "name": "종류",
+          "label": "종류 선택"
+        },
+        {
+          "name": "구성",
+          "label": "구성 선택"
+        }
+      ]
+    }
+  ]
+}

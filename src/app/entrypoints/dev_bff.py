@@ -12,7 +12,7 @@ Spring 이 뜨면 주소만 되돌린다. 경로와 응답 모양이 같아서 �
 [한계] 저장은 메모리다. 서버를 재시작하면 등록한 상품이 사라진다.
        잡 상태와 결과만 ai.jobs 에 남는다. 임시 도구라 이 정도로 둔다.
 
-담당: 이동건   상태: 1차 (등록 -> 분석 폴링 -> 보고서)
+담당: 이동건 (등록 -> 분석 폴링 -> 보고서) · 강근우 (판매 정보 · 상세페이지 · 이미지)
 """
 
 from __future__ import annotations
@@ -21,8 +21,8 @@ import itertools
 import uuid
 from datetime import UTC, date, datetime
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from pydantic import BaseModel
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from pydantic import BaseModel, Field
 
 from app.config import get_settings
 from app.contracts.v1 import (
@@ -37,14 +37,20 @@ from app.contracts.v1 import (
     CountryStatus,
     JobStatus,
     MarketProfile,
+    OptionSpec,
+    Packaging,
     PriceScenario,
     ProductFillRequest,
     ProductSnapshot,
     QuoteRequest,
     QuoteResponse,
+    SalesSuggestRequest,
+    SalesSuggestResponse,
 )
+from app.core.catalog import shopee_categories
 from app.core.jobs import runner, store
-from app.core.services import copilot, pricing_quote, product_fill
+from app.core.pricing import fee_schedule
+from app.core.services import copilot, pricing_quote, product_fill, sales_suggest
 from app.observability.logging import get_logger
 
 log = get_logger(mod="dev_bff")
@@ -54,6 +60,10 @@ router = APIRouter(prefix="/api/v1", tags=["dev_bff"])
 
 _products: dict[int, dict] = {}
 _jobs_by_product: dict[int, str] = {}
+#: (productId, 국가) -> AI 추천값. 판매 정보 화면 첫 진입 때 한 번 만든다.
+_sales_suggestions: dict[tuple[int, str], SalesSuggestResponse] = {}
+#: (productId, 국가) -> 셀러가 확정한 판매 정보
+_sales_infos: dict[tuple[int, str], dict] = {}
 _product_seq = itertools.count(1)
 _job_seq = itertools.count(1)
 
@@ -134,6 +144,36 @@ class ProductBody(BaseModel):
     imageUrls: list[str] = []
 
 
+class OptionBody(BaseModel):
+    name: str = ""
+    label: str = ""
+    values: list[str] = []
+
+
+class StockRowBody(BaseModel):
+    option1: str = ""
+    option2: str = ""
+    qty: int = 0
+    extraPrice: int = 0
+
+
+class SalesInfoBody(BaseModel):
+    selectedTier: str = "mid"
+    finalPrice: int = 0
+    shippingMethod: str = "sls"
+    category: str = ""
+    attrs: dict[str, str] = {}
+    useOptions: bool = True
+    option1: OptionBody | None = None
+    option2: OptionBody | None = None
+    stock: list[StockRowBody] = []
+    packaging: dict | None = None
+
+
+class SuggestBody(BaseModel):
+    category: str | None = Field(default=None, description="고른 카테고리. 없으면 AI 가 고른다")
+
+
 # ── 인증 (목) ───────────────────────────────────────────────────────────
 
 
@@ -212,17 +252,7 @@ async def _start_analysis(product_id: int) -> str:
         job_id=job_id,
         trace_id=uuid.uuid4().hex,
         countries=list(SUPPORTED_COUNTRIES),
-        product=ProductSnapshot(
-            product_id=product_id,
-            name=product["name"],
-            category=product["category"],
-            supply_cost_krw=product["costPrice"],
-            weight_g=product["weight"],
-            description=product["description"],
-            selling_point=product["sellingPoints"],
-            main_target=product["mainTarget"],
-            image_urls=product["images"],
-        ),
+        product=_snapshot(product),
         market_profile=MarketProfile(),
         preferences=AnalysisPreferences(),
     )
@@ -296,6 +326,80 @@ async def quote(product_id: int, country_code: str, body: QuoteRequest) -> Quote
     return await pricing_quote.quote(body)
 
 
+# ── 판매 정보 ───────────────────────────────────────────────────────────
+
+
+@router.get("/shopee/categories")
+async def shopee_category_list(country: str = Query("VN")) -> list[dict]:
+    catalog = shopee_categories.load(country.upper())
+    return [
+        {"value": item.id, "label": item.label, "labelLocal": item.label_local}
+        for item in catalog.categories.values()
+    ]
+
+
+@router.get("/shopee/categories/{category_id}/attributes")
+async def shopee_category_attributes(category_id: str, country: str = Query("VN")) -> list[dict]:
+    catalog = shopee_categories.load(country.upper())
+    category = catalog.get(category_id)
+    if category is None:
+        raise HTTPException(status_code=404, detail="카테고리를 찾을 수 없습니다")
+    return [attr.model_dump(by_alias=True) for attr in catalog.attribute_schema(category)]
+
+
+@router.get("/products/{product_id}/countries/{country_code}/sales-info")
+async def sales_info(product_id: int, country_code: str):  # noqa: ANN201
+    """판매 정보 입력 화면 초기값. 분석 결과 + AI 추천값 + 저장값."""
+    product = _require_product(product_id)
+    result = await _ensure_result(product_id)
+    if result is None:
+        return _pending(product_id)
+
+    code = country_code.upper()
+    entry = _find_country(_parse(result), code)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="해당 국가 분석 결과가 없습니다")
+
+    key = (product_id, code)
+    if key not in _sales_suggestions:
+        _sales_suggestions[key] = await sales_suggest.suggest(
+            SalesSuggestRequest(country=code, product=_snapshot(product))
+        )
+    return _to_sales_info(product, entry, _sales_suggestions[key], _sales_infos.get(key))
+
+
+@router.post("/products/{product_id}/countries/{country_code}/sales-info/suggest")
+async def sales_info_suggest(product_id: int, country_code: str, body: SuggestBody) -> dict:
+    """카테고리를 바꾸면 그 카테고리 기준으로 속성·옵션을 다시 채운다."""
+    product = _require_product(product_id)
+    code = country_code.upper()
+    suggestion = await sales_suggest.suggest(
+        SalesSuggestRequest(country=code, product=_snapshot(product), category_id=body.category)
+    )
+    _sales_suggestions[(product_id, code)] = suggestion
+    return _suggestion_fields(suggestion)
+
+
+@router.put("/products/{product_id}/countries/{country_code}/sales-info")
+async def save_sales_info(product_id: int, country_code: str, body: SalesInfoBody) -> dict:
+    _require_product(product_id)
+    code = country_code.upper()
+
+    use = body.useOptions
+    option1 = OptionSpec(**body.option1.model_dump()) if use and body.option1 else None
+    option2 = OptionSpec(**body.option2.model_dump()) if use and body.option2 else None
+    problems = sales_suggest.validate_options(option1, option2)
+    if shopee_categories.load(code).get(body.category) is None:
+        problems.append("카테고리를 선택하세요")
+    if problems:
+        raise HTTPException(status_code=422, detail=problems)
+
+    saved = body.model_dump()
+    saved["savedAt"] = datetime.now(UTC).isoformat()
+    _sales_infos[(product_id, code)] = saved
+    return {"saved": saved, "hasSalesInfo": True}
+
+
 # ── 코파일럿 ────────────────────────────────────────────────────────────
 
 
@@ -305,6 +409,22 @@ async def copilot_message(product_id: int, body: CopilotRequest) -> CopilotRespo
 
 
 # ── 내부 헬퍼 ───────────────────────────────────────────────────────────
+
+
+def _snapshot(product: dict) -> ProductSnapshot:
+    packaging = product.get("packaging")
+    return ProductSnapshot(
+        product_id=product["id"],
+        name=product["name"],
+        category=product["category"],
+        supply_cost_krw=product["costPrice"],
+        weight_g=product["weight"],
+        description=product["description"],
+        selling_point=product["sellingPoints"],
+        main_target=product["mainTarget"],
+        packaging=Packaging(**packaging) if packaging else None,
+        image_urls=product["images"],
+    )
 
 
 def _require_product(product_id: int) -> dict:
@@ -371,14 +491,18 @@ def _to_product_card(product: dict) -> dict:
     countries = []
     if product.get("result"):
         for item in _visible_countries(_parse(product["result"])):
+            has_sales_info = (product["id"], item.country) in _sales_infos
+            has_detail = False
             countries.append(
                 {
                     "code": item.country,
                     "name": COUNTRY_NAMES.get(item.country, item.country),
-                    "stage": "report",
+                    "stage": (
+                        "detail" if has_detail else "sales-info" if has_sales_info else "report"
+                    ),
                     "salesStatus": "판매전",
-                    "hasDetailPage": False,
-                    "hasSalesInfo": False,
+                    "hasDetailPage": has_detail,
+                    "hasSalesInfo": has_sales_info,
                 }
             )
     return {
@@ -577,6 +701,85 @@ def _to_country_report(entry: CountryResult) -> dict:
             "scenarios": scenarios,
             "appliedBadges": pricing.applied_badges if pricing else [],
         },
+    }
+
+
+def _option_fields(option: OptionSpec | None) -> dict | None:
+    if option is None:
+        return None
+    return {"name": option.name, "label": option.label or option.name, "values": option.values}
+
+
+def _suggestion_fields(suggestion: SalesSuggestResponse) -> dict:
+    """AI 추천값 -> 프론트 판매 정보 필드."""
+    return {
+        "shopeeCategoryOptions": suggestion.category_options,
+        "shopeeCategoryDefault": suggestion.category_id,
+        "categoryAttrs": [attr.model_dump(by_alias=True) for attr in suggestion.category_attrs],
+        "optionLevel1": _option_fields(suggestion.option1),
+        "optionLevel2": _option_fields(suggestion.option2),
+        "stockHint": suggestion.stock_hint,
+    }
+
+
+def _to_sales_info(
+    product: dict,
+    entry: CountryResult,
+    suggestion: SalesSuggestResponse,
+    saved: dict | None,
+) -> dict:
+    """AI 결과 + 추천값 -> 프론트 판매 정보 화면 (mocks/sales.ts 형태)."""
+    code = entry.country
+    fee = fee_schedule.load(code)
+    pricing = entry.pricing
+    fx = pricing.fx.krw_per_local if pricing and pricing.fx else 0.0
+
+    price_scenarios = [
+        {
+            "id": TIER_ID.get(scenario.tier.value, "mid"),
+            "label": TIER_LABEL.get(scenario.tier.value, scenario.tier.value),
+            "price": scenario.price_krw,
+            "badge": scenario.badge,
+            **({"recommended": True} if scenario.recommended else {}),
+        }
+        for scenario in (pricing.scenarios if pricing else [])
+    ]
+    shipping_methods = [
+        {
+            "id": METHOD_ID.get(option.method.value, "direct"),
+            "name": METHOD_NAME.get(option.method.value, option.method.value),
+            "cost": f"{won(option.cost_krw)}/개",
+            "costKrw": option.cost_krw,
+            "period": f"{option.eta_min_days}~{option.eta_max_days}일",
+            "note": option.fit_badge,
+            **({"aiRecommended": True} if option.recommended else {}),
+        }
+        for option in (entry.logistics.options if entry.logistics else [])
+    ]
+
+    packaging = entry.logistics.packaging_used if entry.logistics else None
+    return {
+        "priceScenarios": price_scenarios,
+        "shippingMethods": shipping_methods,
+        "marginBasis": {
+            "dutyRate": float(fee.duty_rate),
+            "vatRate": float(fee.vat_rate),
+            "shopeeFeeRate": float(fee.platform_fee_rate),
+            "paymentFeeRate": float(fee.payment_fee_rate),
+            "fixedCostKrw": 0,
+            "fxNote": f"1 {fee.currency} = {fx:g}원" if fx else "",
+            "taxBase": fee.tax_base,
+        },
+        "appliedBadges": pricing.applied_badges if pricing else [],
+        "packaging": {
+            "weight": packaging.weight_g if packaging else product["weight"],
+            "width": int(packaging.width_mm / 10) if packaging else 0,
+            "depth": int(packaging.depth_mm / 10) if packaging else 0,
+            "height": int(packaging.height_mm / 10) if packaging else 0,
+        },
+        **_suggestion_fields(suggestion),
+        "stockRows": [],
+        "saved": saved,
     }
 
 

@@ -75,6 +75,30 @@ class ProductUnderstanding(BaseModel):
     confidence: float
 
 
+# ── sales_suggest (담당: 강근우) ────────────────────────────────────────
+
+
+class AttrValue(BaseModel):
+    key: str = Field(description="후보 카테고리의 속성 key 그대로")
+    value: str = Field(description="상품 정보에서 확인되는 값. 모르면 빈 문자열")
+
+
+class OptionDraft(BaseModel):
+    name: str = Field(description="짧은 옵션 이름. optionHints 의 name 중 하나")
+    label: str = Field(description="optionHints 의 label 그대로")
+    values: list[str] = Field(description="옵션값. 상품 정보에 있는 값 우선, 최대 6개")
+
+
+class SalesSuggestionDraft(BaseModel):
+    """판매 정보 추천. 카테고리는 주어진 후보 id 중에서만 고른다."""
+
+    category_id: str = Field(description="후보 목록의 id 중 하나")
+    attributes: list[AttrValue]
+    option1: OptionDraft | None = Field(description="1단 옵션. 옵션이 없는 상품이면 null")
+    option2: OptionDraft | None = Field(description="2단 옵션. 필요 없으면 null")
+    stock_hint: str = Field(description="초기 재고 준비량 제안 한 문장")
+
+
 # ── content_graph (담당: 강근우) ────────────────────────────────────────
 
 
