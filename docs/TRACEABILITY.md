@@ -6,7 +6,7 @@
 - 기준 문서: `명세서정리.md`(F-01~F-43 · R-000~R-006), `docs/AI_개발계획_v2.md`, `docs/API_SPEC_FE기준.md`
 - 범위: AI 레포(`k-sales-hunter-ai`)가 구현하는 요구사항. Spring·FE 담당 항목은 "구현" 칸에 레포명만 적는다.
 - 상태: `stub`(임시값 반환) · `구현`(실동작) · `미착수` · `범위외`
-- 작성: 차은호 · 갱신 2026-09-22 (담당 열을 에이전트 배정 기준으로 정정)
+- 작성: 차은호 · 갱신 2026-09-22 (담당 열을 에이전트 배정 기준으로 정정) · 2026-10-04 강근우 (R-000-05 · R-003 절 추가)
 - 담당 기준: **에이전트 담당자**(동건 마진메이커 / 근우 비서AI·상세페이지 / 은호 트렌드헌터 / 수현 통관).
   이미 구현이 끝난 행은 실제 구현자를 적고, 남은 작업은 에이전트 담당자를 적는다.
 
@@ -18,7 +18,7 @@
 | R-000-02 | 게이트 우선 — PROHIBITED 면 이후 노드 생략 | F-14 | SYS-01-01 | `core/graph/analysis.py` · `nodes/customs_gate.py` | `test_통관_차단이면_이후_노드를_건너뛴다` | 구현 (분기) / 판정은 stub | 이동건(분기 완료) · 권수현(판정) |
 | R-000-03 | 국가 fan-out 병렬 실행 후 State 병합 | F-16 | RPT-01-01 | `core/graph/analysis.py` | `test_3개국이_모두_끝까지_돈다` · `test_국가_하나가_실패해도_나머지는_끝난다` | 구현 | 이동건 |
 | R-000-04 | 결과 종합 · 진입점수 확정 · 국가 랭킹 | F-18 | RPT-01-01 | `nodes/report_compose.py` · `core/pricing/scoring.py` | `test_진입점수와_순위가_확정된다` | stub | 이동건 |
-| R-000-05 | 부분 재실행 — 변경 필드별 영향 범위 판정 | F-42 | EDT-01-01 | `core/graph/rerun_map.py` | — | 미착수 | 강근우 |
+| R-000-05 | 부분 재실행 — 변경 필드별 영향 범위 판정 | F-42 | EDT-01-01 | `core/graph/rerun_map.py` · `core/graph/analysis.py` (`_entry`·`_fan_out`) | `test_partial_rerun.py::test_원가만_바꾸면_마진부터_다시_돈다` 외 7건 · `test_dev_bff_flow.py::test_원가를_고치면_변경내역과_부분_재분석을_준다` | 구현 | 강근우 |
 | R-000-07 | 세션·중단 — 진행 중 노드 취소 | F-42 | SYS-01-01 | `core/jobs/runner.py` | — | 구현 | 이동건 |
 
 ## 2. 시장 분석 (R-001 트렌드 헌터)
@@ -60,15 +60,29 @@
 | R-004-08 | 판정 근거 원문·출처·기준일 보존 | F-43 | RPT-02-01 | `infra/models.py::RagDocument` · `contracts/v1/analysis.py::Evidence` · `data/policies/manifest.yaml` | `test_policy_manifest.py` | manifest 완료 / 적재 미착수 | 권수현 (manifest 초안 차은호) |
 | R-004-10 | 포장 완료 기준 치수 입력 | F-20 | SEL-01-01 | `contracts/v1/analysis.py::Packaging` | — | 구현 | 권수현 |
 
-## 5. 이 표가 아직 안 다루는 요구사항
+## 5. 콘텐츠 생성 · 판매 정보 (R-003 콘텐츠 아키텍트)
+
+| 요구사항 | 내용 | 기능 | 화면 | 구현 | 검증 | 상태 | 담당 |
+|---|---|---|---|---|---|---|---|
+| R-003-12 | Shopee 카테고리 추천 (leaf, 국가별 경로) | F-29 | SEL-01-01 | `core/services/sales_suggest.py` · `core/catalog/shopee_categories.py` · `data/shopee_categories/{VN,SG,TH}.json` | `test_sales_suggest.py::test_시연_상품은_캐릭터_인형으로_채운다` · `test_키워드로_후보를_추린다` · `test_후보_밖_카테고리를_고르면_1순위로_바꾸고_값을_버린다` | 구현 (카테고리 스냅샷 43종, shopeeId 미확인) | 강근우 |
+| R-003-13 | 카테고리 속성·옵션 1·2단 추천 (2단·조합 50개 제한) | F-30 | SEL-01-01 | `core/services/sales_suggest.py` (`limit_combinations` · `validate_options`) | `test_옵션_조합은_50개를_넘지_않는다` · `test_저장_전_옵션_검증` · `test_조합_초과_판매정보는_저장하지_않는다` | 구현 | 강근우 |
+| R-003-06 | 현지화 상세페이지 자동 생성 (한국어 검수본 + 현지어 업로드본, 같은 구조) | F-24 | DTL-01-01 | `core/graph/content.py` · `core/agents/prompts/content_{draft,localize}.md` | `test_content_graph.py::test_한국어본과_현지어본을_같은_구조로_만든다` · `test_사양_표_기본_행은_판매정보에서_코드가_만든다` | 구현 | 강근우 |
+| R-003-11 | 품질 검수 0~100점 · 미달 시 최대 2회 자동 재생성 | F-24 | DTL-01-01 | `core/content/quality.py` · `core/graph/content.py` (`_after_quality`) | `test_하드컷이면_지적사항을_넣어_다시_쓴다` · `test_2회_재생성해도_미달이면_검수필요로_결과를_준다` · `test_누락_섹션을_감점한다` | 구현 | 강근우 |
+| R-003 (문화 필터) | 금기·과장·상표 표현 제거 (국가별 사전) | F-24 | DTL-01-01 | `core/content/culture.py` · `data/culture/{common,VN,SG,TH}.yaml` | `test_국가별_금기는_그_나라에서만_걸린다` · `test_치환_가능한_과장만_바꾸고_하드컷은_남긴다` · `test_영문은_단어_경계로만_찾는다` | 구현 | 강근우 |
+| R-003 (F-25) | 상세페이지 텍스트 수정 · 현지어 재번역 (사람 수정값 우선) | F-25 | DTL-01-01 | `core/services/content_edit.py` · dev_bff `PATCH .../detail-page/content` | `test_셀러_수정본을_현지어로_다시_옮긴다` · `test_등록부터_상세페이지_수정까지` | 구현 | 강근우 |
+| R-003 (F-26·F-28) | 상품·상세 이미지 AI 생성 (기본 컷 / 모델 컷 4종) | F-26 · F-28 | DTL-01-02 | `core/services/image_gen.py` · `data/models.yaml` · `core/jobs/runner.py` (즉시 취소) | `test_image_gen.py` 8건 (프롬프트·캐시·일일 상한·취소·dev_bff 전 구간) | 구현 (실 API 는 live 미검증) | 강근우 |
+| R-003 (F-27) | 이미지 직접 업로드 · 대표 지정 · 삭제 | F-27 | DTL-01-01 | dev_bff `.../detail-page/images*` → Spring 이관 | `test_상세페이지에서_이미지를_생성해_저장한다` | dev_bff 구현 / Spring 미착수 | 강근우 |
+
+> 확인 필요: R-003 하위 ID 중 06·11·12·13 만 `명세서정리.md` 에서 확인했다. 나머지 행은 기능 ID(F-xx)로 적었다. 정의서가 나오면 하위 ID 로 바꾼다.
+
+### 5-1. 이 표가 아직 안 다루는 요구사항
 
 | 요구사항 | 내용 | 구현 | 담당 |
 |---|---|---|---|
-| R-003 | 콘텐츠 아키텍트 — 상세페이지·이미지 생성 | `core/graph/content.py` (미작성) · `core/services/{sales_suggest,image_gen}.py` | 강근우 |
 | R-005 | 전략 고도화 코파일럿 | `core/services/copilot.py` | 이동건 |
 | R-006 | 플랫폼 오토 업로더 (Shopee 연동) | **과업 범위 제외** (기술결정서 결정-2). 프론트에서 셀러센터 링크로 대체 | — |
 
-R-003·R-005 는 구현이 시작되면 이 표에 절을 추가한다.
+R-005 는 구현이 시작되면 이 표에 절을 추가한다.
 
 ## 6. 미해결 항목
 
@@ -110,7 +124,7 @@ R-003·R-005 는 구현이 시작되면 이 표에 절을 추가한다.
 |---|---|
 | `data/fee_schedules/*.yaml` (수수료·관세·VAT) | 이동건 (관세·VAT 값은 권수현이 제공) |
 | `data/shipping_rates/*.yaml` | 권수현 |
-| `data/shopee_categories/*.json` · `data/culture/*.yaml` | 강근우 |
+| ~~`data/shopee_categories/*.json` · `data/culture/*.yaml`~~ 작성 완료 (2026-10-04) | 강근우 |
 
 ### 7-5. FxProvider 가 mock 뿐 · 이동건
 
@@ -119,3 +133,28 @@ R-002-04(환율)의 구현이 `core/providers/` 의 mock 이다. 2주차 실 LLM
 ### 7-6. 요구사항 정의서 원본 부재 · 전원
 
 `중간보고산출물-GF/01. 분석/20. 요구사항 분석/HD-GF-ANA-RA-10. 요구사항 정의서` 폴더가 비어 있다. 하위 ID 문구를 코드 주석과 `명세서정리.md` 에서 역추적한 상태다(§6).
+
+### 7-7. dev_bff 에 추가된 라우트 → Spring 이관 대상 · 권수현 · 강근우
+
+판매 정보·상세페이지·이미지 화면을 프론트에 붙이려고 dev_bff 에 라우트를 먼저 만들었다. 응답 JSON 이 곧 Spring 컨트롤러 명세다.
+
+| 라우트 | Spring 담당 |
+|---|---|
+| `GET /shopee/categories` · `GET /shopee/categories/{id}/attributes` · `GET/PUT .../sales-info` · `POST .../sales-info/suggest` | 권수현 (카테고리는 `data/shopee_categories/{cc}.json` 을 그대로 읽으면 된다) |
+| `POST/GET .../detail-page` · `PATCH .../detail-page/content` · `.../detail-page/images*` · `/image-jobs/*` | 강근우 |
+| `PUT /products/{id}` (변경 내역 + PARTIAL 재분석) | 차은호 (products 라우트) |
+
+`POST .../detail-page/images` 는 API 스펙에서 업로드와 생성 결과 확정을 한 경로로 받게 돼 있었다. multipart 와 JSON 을 한 경로에서 받기 어려워 확정은 `POST .../detail-page/images/generated` 로 나눴다 (API_SPEC §2-4 갱신).
+
+### 7-8. runner 수정 사항 리뷰 요청 · 이동건
+
+이미지 잡 작업 중 `core/jobs/runner.py` 를 고쳤다. 기반 코드 담당이라 확인을 부탁한다.
+
+- 대기(QUEUED) 중 취소 요청이 `mark_running` 에 덮여 사라지던 문제 수정 — `_guard` 가 시작 전에 취소 플래그를 본다.
+- 이미지 잡은 취소 시 태스크를 바로 끊는다 (`_hard_cancel`). API 호출 하나가 20~40초라 노드 경계까지 기다리면 프론트가 그동안 '취소 요청됨'에 머문다.
+- 국가가 없는 잡(상세페이지·이미지)은 `JobContext.step` 을 처음부터 준다. 안 주면 첫 flush 가 분석 단계(`MARGIN`)를 쓴다.
+
+### 7-9. 시장 노드 구현 시 참고 · 차은호
+
+- `CountryResult` 에 `product_features` · `market_raw` 를 선택 필드로 추가했다. 부분 재실행이 MARKET_INSIGHT 부터 돌 때 이 값을 복원한다. 값이 없으면 처음부터 다시 돈다.
+- 상세페이지 생성이 `product_features.keywords` · `product_features.usps` 를 검색 키워드·강조 특징으로 쓴다. 실구현 때 키를 유지해 주면 품질 검수의 SEO 키워드 항목이 살아난다.
