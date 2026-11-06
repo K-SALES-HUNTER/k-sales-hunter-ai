@@ -20,8 +20,9 @@ from __future__ import annotations
 import itertools
 import uuid
 from datetime import UTC, date, datetime
+from pathlib import Path
 
-from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
 from pydantic import BaseModel, Field
 
 from app.config import get_settings
@@ -40,6 +41,10 @@ from app.contracts.v1 import (
     CopilotResponse,
     CountryResult,
     CountryStatus,
+    ImageCommand,
+    ImageMode,
+    ImageResult,
+    ImageTarget,
     JobStatus,
     MarketProfile,
     OptionSpec,
@@ -192,6 +197,25 @@ class DetailContentBody(BaseModel):
     description: str
     #: true 면 현지어본도 다시 옮긴다
     retranslate: bool = True
+
+
+class GenerateImageBody(BaseModel):
+    target: str = "detail"
+    prompt: str
+    mode: str = "basic"
+    modelId: str | None = None
+    referenceIds: list[str] = []
+
+
+class GeneratedImageBody(BaseModel):
+    #: 이미지 잡 id (GET /image-jobs/{jobId} 결과의 id)
+    generatedImageId: str
+    target: str = "detail"
+    replaceImageId: str | None = None
+
+
+class MainImageBody(BaseModel):
+    imageId: str
 
 
 class SuggestBody(BaseModel):
@@ -504,6 +528,127 @@ async def update_detail_content(
     ko.update(name=body.name, description=body.description)
     page["edited"] = True
     return _to_detail_page(product, code, page)
+
+
+# ── 상세 페이지 이미지 ──────────────────────────────────────────────────
+
+
+@router.get("/uploads/{name}")
+async def serve_upload(name: str):  # noqa: ANN201
+    """업로드·생성 이미지 서빙. 업로드 응답의 url 이 이 경로를 가리킨다."""
+    from fastapi.responses import FileResponse
+
+    path = get_settings().upload_dir / Path(name).name
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="파일이 없습니다")
+    return FileResponse(path)
+
+
+@router.post("/products/{product_id}/countries/{country_code}/detail-page/images")
+async def upload_detail_image(
+    product_id: int,
+    country_code: str,
+    file: UploadFile = File(...),
+    target: str = Form("detail"),
+) -> dict:
+    page = await _require_detail(product_id, country_code)
+    uploaded = await upload_image(file)
+    return _add_image(page, target, uploaded["url"])
+
+
+@router.post("/products/{product_id}/countries/{country_code}/detail-page/images/generated")
+async def save_generated_image(
+    product_id: int, country_code: str, body: GeneratedImageBody
+) -> dict:
+    """AI 생성 결과 확정. replaceImageId 가 있으면 그 자리를 바꾼다 (재생성 시 원본 id 유지)."""
+    page = await _require_detail(product_id, country_code)
+    state = await store.get(body.generatedImageId)
+    if state.status is not JobStatus.COMPLETED or not state.result:
+        raise HTTPException(status_code=409, detail="이미지 생성이 끝나지 않았습니다")
+    image = ImageResult.model_validate(state.result)
+
+    if body.replaceImageId:
+        for key in ("productImages", "detailImages"):
+            for item in page[key]:
+                if item["id"] == body.replaceImageId:
+                    item.update(src=image.image_url, prompt=image.prompt)
+                    return item
+    return _add_image(page, body.target, image.image_url, prompt=image.prompt)
+
+
+@router.delete(
+    "/products/{product_id}/countries/{country_code}/detail-page/images/{image_id}",
+    status_code=204,
+)
+async def delete_detail_image(product_id: int, country_code: str, image_id: str) -> None:
+    page = await _require_detail(product_id, country_code)
+    for key in ("productImages", "detailImages"):
+        page[key] = [item for item in page[key] if item["id"] != image_id]
+    if page["mainImageId"] == image_id:
+        page["mainImageId"] = page["productImages"][0]["id"] if page["productImages"] else None
+
+
+@router.put("/products/{product_id}/countries/{country_code}/detail-page/images/main")
+async def set_main_image(product_id: int, country_code: str, body: MainImageBody) -> dict:
+    page = await _require_detail(product_id, country_code)
+    if not any(item["id"] == body.imageId for item in page["productImages"]):
+        raise HTTPException(status_code=404, detail="상품 이미지가 아닙니다")
+    page["mainImageId"] = body.imageId
+    return {"mainImageId": body.imageId}
+
+
+@router.post(
+    "/products/{product_id}/countries/{country_code}/detail-page/images/generate",
+    status_code=202,
+)
+async def generate_detail_image(
+    product_id: int, country_code: str, body: GenerateImageBody
+) -> dict:
+    """프론트 GenerateImageParams 그대로. referenceIds 는 보유 사진 id 또는 업로드 id."""
+    page = await _require_detail(product_id, country_code)
+    references = [_reference_url(page, ref_id) for ref_id in body.referenceIds]
+    references = [url for url in references if url]
+    if not references:
+        raise HTTPException(status_code=422, detail="참고 사진을 1장 이상 고르세요")
+
+    job_id = f"i_{product_id}_{next(_job_seq)}"
+    await runner.submit_image(
+        ImageCommand(
+            job_id=job_id,
+            trace_id=uuid.uuid4().hex,
+            target=ImageTarget(body.target.upper()),
+            prompt=body.prompt,
+            mode=ImageMode(body.mode.upper()),
+            model_id=body.modelId,
+            reference_urls=references,
+        )
+    )
+    return {"jobId": job_id}
+
+
+@router.get("/image-jobs/{job_id}")
+async def image_job(job_id: str) -> dict:
+    state = await store.get(job_id)
+    status = {
+        JobStatus.COMPLETED: "DONE",
+        JobStatus.FAILED: "FAILED",
+        JobStatus.CANCELLED: "CANCELLED",
+    }.get(state.status, "RUNNING")
+    result = None
+    if state.status is JobStatus.COMPLETED and state.result:
+        image = ImageResult.model_validate(state.result)
+        result = {"id": job_id, "src": image.image_url, "prompt": image.prompt}
+    return {
+        "status": status,
+        "progress": state.progress,
+        "result": result,
+        "errorCode": state.error.code.value if state.error else None,
+    }
+
+
+@router.post("/image-jobs/{job_id}/cancel", status_code=204)
+async def cancel_image_job(job_id: str) -> None:
+    await runner.cancel(job_id)
 
 
 # ── 코파일럿 ────────────────────────────────────────────────────────────
@@ -1060,6 +1205,42 @@ def _to_detail_page(product: dict, code: str, page: dict) -> dict:
         "detailImages": page["detailImages"],
         "locale": page["locale"],
     }
+
+
+async def _require_detail(product_id: int, country_code: str) -> dict:
+    _require_product(product_id)
+    page = await _ensure_detail(product_id, country_code.upper())
+    if page is None:
+        raise HTTPException(status_code=404, detail="상세 페이지를 먼저 생성하세요")
+    return page
+
+
+def _add_image(page: dict, target: str, src: str, *, prompt: str | None = None) -> dict:
+    """상품 이미지(기본 N) / 상세 이미지(상세 이미지 N) 목록 끝에 붙인다."""
+    is_product = target.lower() == "product"
+    key = "productImages" if is_product else "detailImages"
+    index = len(page[key]) + 1
+    item = {
+        "id": f"{'pi' if is_product else 'di'}_{uuid.uuid4().hex[:8]}",
+        "label": f"기본 {index}" if is_product else f"상세 이미지 {index}",
+        "src": src,
+        "prompt": prompt,
+    }
+    page[key].append(item)
+    if is_product and page["mainImageId"] is None:
+        page["mainImageId"] = item["id"]
+    return item
+
+
+def _reference_url(page: dict, ref_id: str) -> str | None:
+    """참고 사진 id -> URL. 상세페이지 이미지 id 이거나 /uploads/images 응답 id 다."""
+    for key in ("productImages", "detailImages"):
+        for item in page[key]:
+            if item["id"] == ref_id:
+                return item["src"]
+    if (get_settings().upload_dir / Path(ref_id).name).is_file():
+        return f"/api/v1/uploads/{Path(ref_id).name}"
+    return None
 
 
 def _band_ratio(price_krw: int, band) -> float:  # noqa: ANN001
