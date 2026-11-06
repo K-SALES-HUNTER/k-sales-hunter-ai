@@ -282,6 +282,10 @@ class CountryResult(CamelModel):
     logistics: LogisticsResult | None = None
     pricing: PricingResult | None = None
     risk: RiskResult | None = None
+    #: 상품 이해 결과 (키워드·USP 포함). 상세페이지 생성과 부분 재실행 복원에 쓴다.
+    product_features: dict | None = None
+    #: 시장 수집 원본. 부분 재실행 때 MARKET_RESEARCH 를 다시 부르지 않으려고 보존한다.
+    market_raw: dict | None = None
     completed_nodes: list[str] = Field(default_factory=list)
     failed_nodes: list[str] = Field(default_factory=list)
     error_code: ErrorCode | None = None

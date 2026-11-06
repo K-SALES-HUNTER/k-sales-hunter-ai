@@ -57,6 +57,12 @@ class CountryState(TypedDict, total=False):
     #: 중단 신호. True 면 남은 노드가 통과만 한다 (실패·취소·게이트 차단 공용).
     halted: bool
 
+    # ── 부분 재실행 (R-000-05) ────────────────────────────
+    #: 이 노드부터 돈다. 없으면 처음부터. 앞 노드 산출물은 이전 결과에서 복원돼 있다.
+    start_node: str | None
+    #: 다시 돌 필요가 없는 국가의 이전 스냅샷. 있으면 파이프라인을 건너뛴다.
+    carry_over: dict[str, Any] | None
+
 
 class AnalysisState(TypedDict, total=False):
     """잡 전체 state."""

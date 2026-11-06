@@ -29,7 +29,8 @@ from typing import Any
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 
-from app.contracts.v1 import CountryStatus, NodeName
+from app.contracts.v1 import COUNTRY_NODE_ORDER, CountryStatus, NodeName
+from app.core.graph import rerun_map
 from app.core.graph.nodes import (
     customs_gate,
     logistics_estimate,
@@ -60,7 +61,10 @@ def build_country_graph():  # noqa: ANN201
     graph.add_node(NodeName.MARGIN.value, margin.run)
     graph.add_node(NodeName.RISK_CHECKLIST.value, risk_checklist.run)
 
-    graph.add_edge(START, NodeName.PRODUCT_UNDERSTANDING.value)
+    #: 부분 재실행이면 start_node 부터 들어간다 (R-000-05)
+    graph.add_conditional_edges(
+        START, _entry, {name.value: name.value for name in COUNTRY_NODE_ORDER}
+    )
     graph.add_edge(NodeName.PRODUCT_UNDERSTANDING.value, NodeName.CUSTOMS_GATE.value)
 
     #: 게이트 결과에 따라 조기 종료하거나 나머지를 돈다
@@ -80,6 +84,10 @@ def build_country_graph():  # noqa: ANN201
     return graph.compile()
 
 
+def _entry(state: CountryState) -> str:
+    return state.get("start_node") or NodeName.PRODUCT_UNDERSTANDING.value
+
+
 def _after_customs_gate(state: CountryState) -> str:
     """판매 불가면 이후 노드를 실행하지 않는다.
 
@@ -89,25 +97,39 @@ def _after_customs_gate(state: CountryState) -> str:
 
 
 def _fan_out(state: AnalysisState) -> list[Send]:
-    """국가별로 독립 파이프라인을 띄운다. MVP 는 VN·SG·TH 3개."""
-    return [
-        Send(
-            RUN_COUNTRY,
-            CountryState(
-                meta=state["meta"],
-                country=country,
-                product=state["product"],
-                market_profile=state.get("market_profile"),
-                preferences=state.get("preferences", {}),
-                completed_nodes=[],
-                failed_nodes=[],
-                review_reasons=[],
-                filtered_out=False,
-                halted=False,
-            ),
+    """국가별로 독립 파이프라인을 띄운다. MVP 는 VN·SG·TH 3개.
+
+    PARTIAL 이면 국가마다 이전 결과를 보고 시작 노드와 복원값을 정한다.
+    이전 결과에 없는 국가(새로 추가된 국가)는 처음부터 돈다.
+    """
+    previous_result = state.get("previous_result")
+    start = rerun_map.start_node(state.get("changed_fields") or []) if previous_result else None
+
+    sends = []
+    for country in state.get("countries", []):
+        payload = CountryState(
+            meta=state["meta"],
+            country=country,
+            product=state["product"],
+            market_profile=state.get("market_profile"),
+            preferences=state.get("preferences", {}),
+            completed_nodes=[],
+            failed_nodes=[],
+            review_reasons=[],
+            filtered_out=False,
+            halted=False,
         )
-        for country in state.get("countries", [])
-    ]
+        previous = rerun_map.find_previous(previous_result, country)
+        if previous and start:
+            carried = rerun_map.carry_over(previous, start)
+            restored = None if carried else rerun_map.restore(previous, start)
+            if carried:
+                payload["carry_over"] = carried
+            elif restored:
+                payload.update(restored)
+                payload["start_node"] = start.value
+        sends.append(Send(RUN_COUNTRY, payload))
+    return sends
 
 
 def _country_status(result: dict[str, Any]) -> CountryStatus:
@@ -124,6 +146,19 @@ async def _run_country(payload: CountryState) -> dict:
     """서브그래프를 돌리고 결과를 부모의 country_results 에 하나 얹는다."""
     from app.core.graph.runtime import current_job
 
+    ctx = current_job.get()
+    carried = payload.get("carry_over")
+    if carried:
+        if ctx is not None:
+            ctx.done[carried["country"]] = len(COUNTRY_NODE_ORDER)
+            ctx.mark_country(carried["country"], CountryStatus(carried["status"]))
+            await ctx.flush()
+        return {"country_results": [carried]}
+
+    if ctx is not None and payload.get("start_node"):
+        #: 복원한 노드만큼 진행률을 미리 채운다. 오버레이가 처음 단계부터 다시 돌지 않게.
+        ctx.done[payload["country"]] = len(payload.get("completed_nodes") or [])
+
     country_graph = build_country_graph()
     result: dict[str, Any] = await country_graph.ainvoke(payload)
 
@@ -138,13 +173,13 @@ async def _run_country(payload: CountryState) -> dict:
         "pricing": result.get("pricing"),
         "risk": result.get("risk"),
         "product_features": result.get("product_features"),
+        "market_raw": result.get("market_raw"),
         "completed_nodes": result.get("completed_nodes", []),
         "failed_nodes": result.get("failed_nodes", []),
         "review_reasons": result.get("review_reasons", []),
         "error": result.get("error"),
     }
 
-    ctx = current_job.get()
     if ctx is not None:
         ctx.mark_country(snapshot["country"], _country_status(result))
         await ctx.flush()

@@ -116,3 +116,34 @@ async def test_등록부터_상세페이지_수정까지(client: httpx.AsyncClie
 
     card = (await client.get(f"{BASE}/products/{product_id}")).json()
     assert next(c for c in card["countries"] if c["code"] == "VN")["stage"] == "detail"
+
+
+async def test_원가를_고치면_변경내역과_부분_재분석을_준다(client: httpx.AsyncClient, memory_store):  # noqa: ANN001
+    body = {
+        "name": "말랑 프렌즈 캐릭터 인형",
+        "category": "캐릭터·굿즈",
+        "costPrice": 11500,
+        "weight": 250,
+    }
+    product_id = (await client.post(f"{BASE}/products", json=body)).json()["productId"]
+    await _poll(
+        client,
+        f"{BASE}/products/{product_id}/analysis",
+        done=lambda r: r.json()["status"] == "COMPLETED",
+    )
+
+    same = (await client.put(f"{BASE}/products/{product_id}", json=body)).json()
+    assert same == {"changes": [], "analysisJobId": None}
+
+    edited = (
+        await client.put(f"{BASE}/products/{product_id}", json={**body, "costPrice": 16500})
+    ).json()
+    assert edited["changes"] == [{"label": "공급 원가", "before": "11,500원", "after": "16,500원"}]
+    request = memory_store[edited["analysisJobId"]].request
+    assert request["jobType"] == "PARTIAL"
+    assert request["partial"]["changedFields"] == ["product.supplyCostKrw"]
+
+    report = await _poll(
+        client, f"{BASE}/products/{product_id}/report", done=lambda r: r.status_code == 200
+    )
+    assert report.json()["countries"]
